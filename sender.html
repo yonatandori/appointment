@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>שליחת תור למטופל – יונתן דורי</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header container">
+    <div class="brand">
+      <img src="assets/logo.png" alt="לוגו הקליניקה" class="logo">
+      <h1>שליחת תור למטופל</h1>
+      <p class="subtitle">מילוי מהיר ושליחה בוואטסאפ</p>
+    </div>
+  </header>
+
+  <main class="container sender-form">
+    <section class="card">
+      <h2>פרטי התור</h2>
+      <form id="sendForm">
+        <label>שם המטופל:<br>
+          <input type="text" id="client" required>
+        </label>
+
+        <label>טלפון המטופל (05...):<br>
+          <input type="tel" id="phone" pattern="05[0-9]{8}" placeholder="למשל 0546257272" required>
+        </label>
+
+        <label>סוג טיפול / כותרת:<br>
+          <input type="text" id="title" value="עיסוי רפואי – טיפול מלא" required>
+        </label>
+
+        <label>תאריך:<br>
+          <input type="date" id="date" required>
+        </label>
+
+        <label>שעת התחלה:<br>
+          <input type="time" id="start" required>
+        </label>
+
+        <label>שעת סיום:<br>
+          <input type="time" id="end" required>
+        </label>
+
+        <label>הערות:<br>
+          <textarea id="notes" rows="2" placeholder="לדוגמה: כאב בצוואר, עדיפות לטיפול עדין..."></textarea>
+        </label>
+
+        <div class="btn-row">
+          <button type="submit" class="btn primary">צור קישור ושלח בוואטסאפ</button>
+        </div>
+      </form>
+
+      <div id="preview"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer container">
+    <p>© <span id="year"></span> יונתן דורי — עיסוי רפואי</p>
+  </footer>
+
+  <script src="sender.js"></script>
+</body>
+</html>
