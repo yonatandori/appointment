@@ -3,7 +3,8 @@
 
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
-  const BASE_URL = "https://yourdomain.com/index.html"; // שנה לכתובת האמיתית של עמוד המטופל שלך
+  const BASE_URL = "https://yonatandori.github.io/appointment/index.html";
+ //
 
   form.addEventListener("submit", e => {
     e.preventDefault();
@@ -44,3 +45,4 @@
     `;
   });
 })();
+
