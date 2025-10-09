@@ -27,11 +27,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const startFull = `${date}T${start}`;
     const endFull = `${date}T${end}`;
 
-   // בחירת כתובת לפי הרדיו שנבחר
-const location = encodeURIComponent(document.querySelector('input[name="location"]:checked').value);
+// --- מיקום הטיפול ---
+const locationRaw = document.querySelector('input[name="location"]:checked').value;
+const [branchName, addressFull] = locationRaw.split("|").map(v => v.trim());
+const location = encodeURIComponent(addressFull);
 
-// בונה קישור לדף המטופל כולל הכתובת
-const url = `${BASE_URL}?client=${client}&title=${title}&start=${startFull}&end=${endFull}&notes=${notes}&location=${location}`;
+// --- בונה את הקישור עם הכתובת ---
+const url = `${BASE_URL}?client=${client}&title=${title}&start=${startFull}&end=${endFull}&notes=${notes}&location=${location}&branch=${encodeURIComponent(branchName)}`;
 const decodedUrl = decodeURIComponent(url);
 
 
@@ -57,5 +59,6 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
