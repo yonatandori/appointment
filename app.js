@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const start = params.get("start") || "2025-10-22T09:00";
   const end = params.get("end") || "2025-10-22T10:00";
   const notes = params.get("notes") || "";
-  const location = "קליניקת יונתן דורי – רח׳ הדוגמה 12, תל אביב";
+ const location = params.get("location") || "קליניקת יונתן דורי";
+
 
   // שמירת הנתונים באלמנט
   apptEl.dataset.clientName = client;
@@ -51,3 +52,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
   console.log("✅ נתוני התור נטענו בהצלחה למטופל:", client, title, start);
 });
+
