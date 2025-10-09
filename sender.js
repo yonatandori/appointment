@@ -1,11 +1,14 @@
-(function init(){
-  document.getElementById("year").textContent = new Date().getFullYear();
-
+document.addEventListener("DOMContentLoaded", function() {
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
-  const BASE_URL = "https://yonatandori.github.io/appointment/index.html"; // כתובת אמיתית של עמוד המטופל
+  const BASE_URL = "https://yonatandori.github.io/appointment/index.html";
 
-  form.addEventListener("submit", e => {
+  if (!form) {
+    console.error("⚠️ לא נמצא אלמנט sendForm בדף!");
+    return;
+  }
+
+  form.addEventListener("submit", function(e) {
     e.preventDefault();
 
     const client = encodeURIComponent(document.getElementById("client").value.trim());
@@ -16,28 +19,23 @@
     const end = document.getElementById("end").value;
     const notes = encodeURIComponent(document.getElementById("notes").value.trim());
 
-    if(!date || !start || !end || !phoneRaw){
+    if (!date || !start || !end || !phoneRaw) {
       alert("אנא מלא את כל השדות הנדרשים כולל מספר טלפון.");
       return;
     }
 
-    // בונה תאריך מלא ISO
     const startFull = `${date}T${start}`;
-    const endFull   = `${date}T${end}`;
+    const endFull = `${date}T${end}`;
 
-    // בונה קישור לדף המטופל
     const url = `${BASE_URL}?client=${client}&title=${title}&start=${startFull}&end=${endFull}&notes=${notes}`;
     const decodedUrl = decodeURIComponent(url);
 
-    // ניקוי מספר טלפון לפורמט בינלאומי
-    let phone = phoneRaw.replace(/\D/g, ""); // מסיר תווים לא ספרתיים
+    let phone = phoneRaw.replace(/\D/g, "");
     if (phone.startsWith("0")) phone = "972" + phone.substring(1);
 
-    // הודעת וואטסאפ
     const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
     const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
-    // מציג תוצאה עם כפתור וואטסאפ
     preview.style.display = "block";
     preview.innerHTML = `
       <p><strong>קישור נוצר בהצלחה:</strong></p>
@@ -45,4 +43,10 @@
       <a class="btn-whatsapp" href="${waLink}" target="_blank">📲 שלח למטופל בוואטסאפ</a>
     `;
   });
-})();
+
+  // הדפסת שנה בפוטר (אם קיימת)
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
+});
