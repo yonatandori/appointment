@@ -51,9 +51,10 @@ const decodedUrl = decodeURIComponent(url);
     if (phone.startsWith("0")) phone = "972" + phone.substring(1);
 
     
-// הודעת וואטסאפ - שולחת קישור נקי ללא קידוד נוסף
-const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
-const waLink = `https://wa.me/${phone}?text=${encodeURIComponent("שלום " + decodeURIComponent(client) + ", זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n")}${decodedUrl}`;
+// הודעת וואטסאפ - בלי קידוד כפול של הקישור
+const messageText = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n`;
+const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(messageText)}${decodedUrl}`;
+
 
 
     preview.style.display = "block";
@@ -70,6 +71,7 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent("שלום " + d
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
