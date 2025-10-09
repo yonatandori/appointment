@@ -33,8 +33,10 @@ document.addEventListener("DOMContentLoaded", function() {
     let phone = phoneRaw.replace(/\D/g, "");
     if (phone.startsWith("0")) phone = "972" + phone.substring(1);
 
-    const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
-    const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    // הודעת וואטסאפ (ללא קידוד כפול)
+const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
+const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(/%26/g, "&");
+
 
     preview.style.display = "block";
     preview.innerHTML = `
@@ -50,3 +52,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
