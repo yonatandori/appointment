@@ -39,10 +39,11 @@ for (const radio of radios) {
 }
 
 const [branchName, addressFull] = locationRaw.split("|").map(v => v.trim());
-const location = encodeURIComponent(addressFull);
 
 // --- בונה את הקישור עם הכתובת ---
-const url = `${BASE_URL}?client=${client}&title=${title}&start=${startFull}&end=${endFull}&notes=${notes}&location=${location}&branch=${encodeURIComponent(branchName)}`;
+// חשוב: לא לקודד כאן! app.js כבר מטפל בקידוד בעצמו
+const url = `${BASE_URL}?client=${encodeURIComponent(client)}&title=${encodeURIComponent(title)}&start=${encodeURIComponent(startFull)}&end=${encodeURIComponent(endFull)}&notes=${encodeURIComponent(notes)}&location=${encodeURIComponent(addressFull)}&branch=${encodeURIComponent(branchName)}`;
+
 const decodedUrl = decodeURIComponent(url);
 
 
@@ -68,6 +69,7 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
