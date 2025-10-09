@@ -63,6 +63,22 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(messageText)} $
       <p><strong>קישור נוצר בהצלחה:</strong></p>
       <a href="${decodedUrl}" target="_blank">${decodedUrl}</a><br><br>
       <a class="btn-whatsapp" href="${waLink}" target="_blank">📲 שלח למטופל בוואטסאפ</a>
+      // מאזין ללחיצה על כפתור הוואטסאפ ומייצר את הקישור בזמן אמת
+setTimeout(() => {
+  const waBtn = document.getElementById("btnSendWA");
+  if (!waBtn) return;
+
+  waBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    let phone = phoneRaw.replace(/\D/g, "");
+    if (phone.startsWith("0")) phone = "972" + phone.substring(1);
+
+    const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
+    const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(waLink, "_blank");
+  });
+}, 100);
+
     `;
   });
 
@@ -72,6 +88,7 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(messageText)} $
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
