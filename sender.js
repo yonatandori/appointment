@@ -28,7 +28,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const endFull = `${date}T${end}`;
 
 // --- מיקום הטיפול ---
-const locationRaw = document.querySelector('input[name="location"]:checked').value;
+// בודק בזמן אמת איזו כתובת נבחרה
+let locationRaw = "";
+const radios = document.getElementsByName("location");
+for (const radio of radios) {
+  if (radio.checked) {
+    locationRaw = radio.value;
+    break;
+  }
+}
+
 const [branchName, addressFull] = locationRaw.split("|").map(v => v.trim());
 const location = encodeURIComponent(addressFull);
 
@@ -59,6 +68,7 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
