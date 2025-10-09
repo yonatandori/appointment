@@ -50,9 +50,10 @@ const decodedUrl = decodeURIComponent(url);
     let phone = phoneRaw.replace(/\D/g, "");
     if (phone.startsWith("0")) phone = "972" + phone.substring(1);
 
-    // הודעת וואטסאפ (ללא קידוד כפול)
+    
+// הודעת וואטסאפ - שולחת קישור נקי ללא קידוד נוסף
 const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${decodedUrl}`;
-const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(/%26/g, "&");
+const waLink = `https://wa.me/${phone}?text=${encodeURIComponent("שלום " + decodeURIComponent(client) + ", זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n")}${decodedUrl}`;
 
 
     preview.style.display = "block";
@@ -69,6 +70,7 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`.replace(
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
