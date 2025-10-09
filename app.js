@@ -2,22 +2,33 @@ document.addEventListener("DOMContentLoaded", function() {
   const apptEl = document.getElementById("appt");
   const params = new URLSearchParams(window.location.search);
 
-  // שליפת נתונים מה-URL
-  const client = params.get("client") || "מטופל יקר";
-  const title = params.get("title") || "עיסוי רפואי";
-  const start = params.get("start") || "2025-10-22T09:00";
-  const end = params.get("end") || "2025-10-22T10:00";
-  const notes = params.get("notes") || "";
- const location = params.get("location") || "קליניקת יונתן דורי";
+  // שליפת נתונים מה-URL + מיקום
+const client = params.get("client") || "מטופל יקר";
+const title = params.get("title") || "עיסוי רפואי";
+const start = params.get("start") || "2025-10-22T09:00";
+const end = params.get("end") || "2025-10-22T10:00";
+const notes = params.get("notes") || "";
+const location = params.get("location") || "פרדסיה, רח׳ הפרג 6"; // ברירת מחדל
+const branch = params.get("branch") || "פרדסיה";
 
+// קישורי ניווט
+const encodedAddress = encodeURIComponent(location);
+const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+const wazeLink = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
 
-  // שמירת הנתונים באלמנט
-  apptEl.dataset.clientName = client;
-  apptEl.dataset.title = title;
-  apptEl.dataset.startLocal = start;
-  apptEl.dataset.endLocal = end;
-  apptEl.dataset.location = location;
-  apptEl.dataset.notes = notes;
+// שמירת הנתונים באלמנט
+apptEl.dataset.clientName = client;
+apptEl.dataset.title = title;
+apptEl.dataset.startLocal = start;
+apptEl.dataset.endLocal = end;
+apptEl.dataset.location = location;
+apptEl.dataset.notes = notes;
+
+// הצגת הכתובת למטופל + קישורי מפה
+document.getElementById("placeText").textContent = `${branch} – ${location}`;
+document.getElementById("linkGmaps").href = gmapsLink;
+document.getElementById("linkWaze").href = wazeLink;
+
 
   // הצגה על המסך
   document.getElementById("clientName").textContent = decodeURIComponent(client);
@@ -52,4 +63,5 @@ document.addEventListener("DOMContentLoaded", function() {
 
   console.log("✅ נתוני התור נטענו בהצלחה למטופל:", client, title, start);
 });
+
 
