@@ -28,6 +28,28 @@ apptEl.dataset.notes = notes;
 document.getElementById("placeText").textContent = `${branch} – ${location}`;
 document.getElementById("linkGmaps").href = gmapsLink;
 document.getElementById("linkWaze").href = wazeLink;
+// פרטי הגעה משתנים לפי הסניף
+const arrivalInfo = document.getElementById("arrivalInfo");
+
+if (branch === "תל אביב") {
+  arrivalInfo.innerHTML = `
+    <h3>פרטי הגעה – תל אביב</h3>
+    <p>
+      הקליניקה ממוקמת בקומת הקרקע ברחוב הזוהר 32 (בבלי).<br>
+      קיימות שתי כניסות:<br>
+      • <strong>קליניקה 1</strong> – הכניסה משמאל לדלת הכניסה לבניין, ליד המכולת.<br>
+      • <strong>קליניקה 2</strong> – הצמודה לדלת הכניסה הראשית של הבניין.
+    </p>
+  `;
+} else {
+  arrivalInfo.innerHTML = `
+    <h3>פרטי הגעה – פרדסיה</h3>
+    <p>
+      הקליניקה נמצאת בקומת הקרקע ברחוב הפרג 6, עם גישה נוחה וחניה זמינה לרוב ממש בסמוך.<br>
+      במידה ולא מצאת חניה, ניתן ליצור קשר בהגעה ואכוון אותך למקום פנוי צמוד לקליניקה.
+    </p>
+  `;
+}
 
 
   // הצגה על המסך
@@ -63,5 +85,6 @@ document.getElementById("linkWaze").href = wazeLink;
 
   console.log("✅ נתוני התור נטענו בהצלחה למטופל:", client, title, start);
 });
+
 
 
