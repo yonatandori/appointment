@@ -1,72 +1,89 @@
 document.addEventListener("DOMContentLoaded", function() {
+  const apptEl = document.getElementById("appt");
   const params = new URLSearchParams(window.location.search);
 
-  const client = params.get("client") || "מטופל יקר";
-  const title = params.get("title") || "עיסוי רפואי";
-  const start = params.get("start") || "";
-  const end = params.get("end") || "";
-  const notes = params.get("notes") || "";
-  const location = params.get("location") || "פרדסיה, רח׳ הפרג 6";
-  const branch = params.get("branch") || "פרדסיה";
+  // שליפת נתונים מה-URL + מיקום
+const client = params.get("client") || "מטופל יקר";
+const title = params.get("title") || "עיסוי רפואי";
+const start = params.get("start") || "2025-10-22T09:00";
+const end = params.get("end") || "2025-10-22T10:00";
+const notes = params.get("notes") || "";
+const location = params.get("location") || "פרדסיה, רח׳ הפרג 6"; // ברירת מחדל
+const branch = params.get("branch") || "פרדסיה";
 
-  const apptEl = document.getElementById("appt");
-  if (apptEl) {
-    apptEl.dataset.clientName = client;
-    apptEl.dataset.title = title;
-    apptEl.dataset.startLocal = start;
-    apptEl.dataset.endLocal = end;
-    apptEl.dataset.location = location;
-    apptEl.dataset.notes = notes;
-  }
+// קישורי ניווט
+const encodedAddress = encodeURIComponent(location);
+const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+const wazeLink = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
 
-  // כתובת וקישורי ניווט
-  const placeTextEl = document.getElementById("placeText");
-  const linkGmaps   = document.getElementById("linkGmaps");
-  const linkWaze    = document.getElementById("linkWaze");
+// שמירת הנתונים באלמנט
+apptEl.dataset.clientName = client;
+apptEl.dataset.title = title;
+apptEl.dataset.startLocal = start;
+apptEl.dataset.endLocal = end;
+apptEl.dataset.location = location;
+apptEl.dataset.notes = notes;
 
-  if (placeTextEl) placeTextEl.textContent = `${branch} – ${location}`;
+// הצגת הכתובת למטופל + קישורי מפה
+document.getElementById("placeText").textContent = `${branch} – ${location}`;
+document.getElementById("linkGmaps").href = gmapsLink;
+document.getElementById("linkWaze").href = wazeLink;
+// פרטי הגעה משתנים לפי הסניף
+const arrivalInfo = document.getElementById("arrivalInfo");
 
-  if (branch === "בית המטופל") {
-    if (linkGmaps) linkGmaps.style.display = "none";
-    if (linkWaze)  linkWaze.style.display  = "none";
-  } else {
-    const encodedAddress = encodeURIComponent(location);
-    const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-    const wazeLink  = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
-    if (linkGmaps) linkGmaps.href = gmapsLink;
-    if (linkWaze)  linkWaze.href  = wazeLink;
-  }
+if (branch === "תל אביב") {
+  arrivalInfo.innerHTML = `
+    <h3>פרטי הגעה – תל אביב</h3>
+    <p>
+      הקליניקה ממוקמת בקומת הקרקע ברחוב הזוהר 32 (בבלי).<br>
+      קיימות שתי כניסות:<br>
+      • <strong>קליניקה 1</strong> – הכניסה משמאל לדלת הכניסה לבניין, ליד המכולת.<br>
+      • <strong>קליניקה 2</strong> – הצמודה לדלת הכניסה הראשית של הבניין.
+    </p>
+  `;
+} else {
+  arrivalInfo.innerHTML = `
+    <h3>פרטי הגעה – פרדסיה</h3>
+    <p>
+      הקליניקה נמצאת בקומת הקרקע ברחוב הפרג 6, עם גישה נוחה וחניה זמינה לרוב ממש בסמוך.<br>
+      במידה ולא מצאת חניה, ניתן ליצור קשר בהגעה ואכוון אותך למקום פנוי צמוד לקליניקה.
+    </p>
+  `;
+}
 
-  // פרטי הגעה לפי הסניף
-  const arrivalInfo = document.getElementById("arrivalInfo");
-  if (!arrivalInfo) return;
 
-  if (branch === "תל אביב") {
-    arrivalInfo.innerHTML = `
-      <h3>פרטי הגעה – תל אביב</h3>
-      <p>
-        הקליניקה ממוקמת בקומת הקרקע ברחוב הזוהר 32 (בבלי).<br>
-        קיימות שתי כניסות:<br>
-        • <strong>קליניקה 1</strong> – משמאל לדלת הכניסה לבניין, ליד המכולת.<br>
-        • <strong>קליניקה 2</strong> – צמודה לדלת הכניסה הראשית של הבניין.
-      </p>
-    `;
-  } else if (branch === "בית המטופל") {
-    arrivalInfo.innerHTML = `
-      <h3>פרטי הגעה – טיפול בבית המטופל</h3>
-      <p>
-        הטיפול יתקיים בביתך בהתאם לכתובת שסוכמה מראש עם יונתן.<br>
-        ודא שיש מקום למיטת טיפולים או מזרן, וגישה נוחה לחניה או לפריקה.<br>
-        ניתן לתאם פרטים נוספים מול יונתן בהודעה או טלפון.
-      </p>
-    `;
-  } else {
-    arrivalInfo.innerHTML = `
-      <h3>פרטי הגעה – פרדסיה</h3>
-      <p>
-        הקליניקה נמצאת בקומת הקרקע ברחוב הפרג 6, עם גישה נוחה וחניה זמינה ברוב הזמן.<br>
-        אם לא מצאת חניה, אפשר ליצור קשר בהגעה ואכוון למקום פנוי סמוך.
-      </p>
-    `;
-  }
+  // הצגה על המסך
+  document.getElementById("clientName").textContent = decodeURIComponent(client);
+  document.getElementById("dateText").textContent = new Date(start).toLocaleDateString("he-IL");
+  document.getElementById("timeText").textContent =
+    new Date(start).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"}) +
+    " - " +
+    new Date(end).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("notesText").textContent = decodeURIComponent(notes);
+  document.getElementById("placeText").textContent = location;
+
+  // עדכון כפתורי וואטסאפ
+  const OWNER_PHONE = "972546257272";
+  const waBase = `https://wa.me/${OWNER_PHONE}?text=`;
+  const dateText = document.getElementById("dateText").textContent;
+  const timeText = document.getElementById("timeText").textContent;
+
+  const msgConfirm = `שלום יונתן, כאן ${decodeURIComponent(client)}. אני מאשר הגעה לטיפול "${decodeURIComponent(title)}" בתאריך ${dateText} בשעה ${timeText}.`;
+  const msgCancel = `שלום יונתן, כאן ${decodeURIComponent(client)}. אני נאלץ לבטל את התור שנקבע ל-${dateText} בשעה ${timeText}.`;
+
+  document.getElementById("btnConfirm").href = waBase + encodeURIComponent(msgConfirm);
+  document.getElementById("btnCancel").href  = waBase + encodeURIComponent(msgCancel);
+
+  // כפתור "הוסף ליומן"
+  const startUTC = new Date(start).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const endUTC = new Date(end).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUTC}/${endUTC}&details=${encodeURIComponent(notes)}&location=${encodeURIComponent(location)}`;
+
+  const btnAdd = document.getElementById("btnAddToCal");
+  btnAdd.href = gcalUrl;
+  btnAdd.target = "_blank";
+
+  console.log("✅ נתוני התור נטענו בהצלחה למטופל:", client, title, start);
 });
+
+
