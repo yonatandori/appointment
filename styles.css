@@ -1,91 +1,102 @@
-body {
-  font-family: "Assistant", sans-serif;
-  background-color: #fafafa;
-  margin: 0;
-  direction: rtl;
+:root{
+  --bg:#f8fafc; --card:#fff; --ink:#0f172a; --muted:#475569;
+  --brand:#0ea5e9; --brand-ink:#0a4d66; --ok:#22c55e; --line:#e2e8f0;
+  --radius:20px; --shadow:0 2px 10px rgba(2,8,23,.06); --space:clamp(10px,2vw,20px);
 }
 
-.page-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+
+.container{width:min(1200px,92vw);margin-inline:auto}
+
+/* Header */
+.site-header{padding:calc(var(--space)*1.5) var(--space)}
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.logo{display:block;width:84px;height:auto;object-fit:contain;filter:none}
+.brand h1{margin:0;font-size:clamp(22px,2.4vw,30px)}
+.subtitle{margin:4px 0 0;color:var(--muted)}
+
+/* Grid layout */
+.layout{
+  display:grid; gap:var(--space);
+  grid-template-columns: 1.1fr 1fr;  /* ימין מעט רחב */
+  align-items:stretch;               /* מיישר גבהים בין עמודות */
+  padding:0 var(--space) var(--space);
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:calc(var(--space)*1.2)}
+.card h2,.card h3{margin-top:0}
+
+/* Column placement */
+.appt-card{grid-column:1/2}
+.travel-card{grid-column:2/3}
+
+/* Key/Value list */
+.kv{display:grid;grid-template-columns:120px 1fr;gap:10px 14px;margin:14px 0 18px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+
+/* Buttons */
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-block:10px}
+.btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;font-weight:600;box-shadow:var(--shadow);transition:transform .04s ease,box-shadow .2s ease,background .2s ease,color .2s ease,border-color .2s ease;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--brand-ink);border-color:var(--line)}
+.btn.primary{background:var(--ok)}
+.fineprint{color:var(--muted);font-size:.9rem}
+
+/* Travel + photo */
+.map-links{display:flex;gap:10px;margin-top:10px}
+.clinic-photo{margin:14px 0 0}
+.clinic-photo img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.clinic-photo figcaption{color:var(--muted);font-size:.9rem;margin-top:6px}
+
+/* About + photo */
+.about-card{grid-column:1/2} /* ימין בשורה השנייה */
+.about-flex{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--space);align-items:center}
+.about-photo img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow)}
+
+/* Stacked three boxes (left) */
+.stacked-cards{grid-column:2/3;display:flex;flex-direction:column;gap:var(--space);justify-content:space-between}
+
+/* Price list */
+.price-list{list-style:none;margin:0;padding:0}
+.price-list li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.price-list li:last-child{border-bottom:0}
+
+/* Tips footer */
+.tips-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space)}
+
+/* Footer */
+.site-footer{text-align:center;padding:30px var(--space) 60px;color:var(--muted)}
+
+/* Responsive */
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .appt-card,.travel-card,.about-card,.stacked-cards,.tips-grid{grid-column:1/-1}
+  .about-flex{grid-template-columns:1fr}
+  .tips-grid{grid-template-columns:1fr}
+  .kv{grid-template-columns:100px 1fr}
 }
 
-.logo {
-  width: 120px;
-  margin-bottom: 10px;
+@media print{
+  body{background:#fff}
+  .btn,.map-links,.clinic-photo figcaption{display:none!important}
+  .card{box-shadow:none;border-color:#ddd}
 }
 
-.page-title {
-  font-size: 1.8rem;
-  color: #333;
-  margin: 0;
-}
-
-.form-wrapper {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-  flex: 1;
-}
-
-.form-group, .form-row {
-  margin-bottom: 15px;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-}
-
-.form-row div {
-  flex: 1;
-}
-
-input, textarea, select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-.btn-primary {
-  width: 100%;
-  background-color: #3b7e7e;
-  color: #fff;
-  border: none;
-  padding: 12px;
+/* עיצוב קופסה לפרטי הגעה */
+.info-box {
+  background: #f8f8f8;
   border-radius: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.btn-primary:hover {
-  background-color: #2d6363;
-}
-
-.preview-card {
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
   padding: 15px;
-  margin-top: 20px;
-  border-radius: 10px;
+  margin-top: 10px;
+  line-height: 1.6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.radio-group label {
-  font-size: 1rem;
-}
-
-.footer {
-  text-align: center;
-  margin-top: 40px;
-  color: #777;
-  font-size: 0.9rem;
+.info-box h3 {
+  margin-top: 0;
+  color: #2e7d32;
+  font-size: 1.1em;
 }
