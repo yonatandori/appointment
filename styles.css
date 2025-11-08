@@ -51,6 +51,11 @@ body{margin:0;font-family:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI"
 .clinic-photo img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow)}
 .clinic-photo figcaption{color:var(--muted);font-size:.9rem;margin-top:6px}
 
+/* Home visit illustration */
+.home-illustration{margin:14px 0 0}
+.home-illustration svg{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
+.home-illustration figcaption{color:var(--muted);font-size:.9rem;margin-top:6px}
+
 /* About + photo */
 .about-card{grid-column:1/2} /* ימין בשורה השנייה */
 .about-flex{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--space);align-items:center}
@@ -81,7 +86,7 @@ body{margin:0;font-family:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI"
 
 @media print{
   body{background:#fff}
-  .btn,.map-links,.clinic-photo figcaption{display:none!important}
+  .btn,.map-links,.clinic-photo figcaption,.home-illustration figcaption{display:none!important}
   .card{box-shadow:none;border-color:#ddd}
 }
 

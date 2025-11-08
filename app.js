@@ -121,6 +121,16 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("linkGmaps").href = gmapsLink;
   document.getElementById("linkWaze").href = wazeLink;
 
+  // Toggle clinic photo vs. home-visit illustration
+  function toggleHomeVisuals(isHomeVisit) {
+    try {
+      const clinic = document.querySelector('.clinic-photo');
+      const homeFig = document.getElementById('homeIllustration');
+      if (clinic) clinic.style.display = isHomeVisit ? 'none' : '';
+      if (homeFig) homeFig.style.display = isHomeVisit ? '' : 'none';
+    } catch (_) { /* noop */ }
+  }
+
   // Normalize and handle home-visit (branch equals location)
   (function(){
     try {
@@ -132,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (mapLinks) mapLinks.style.display = 'none';
         const arrivalInfo = document.getElementById('arrivalInfo');
         if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
+        toggleHomeVisuals(true);
       }
     } catch (_) {}
   })();
@@ -143,6 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (mapLinks) mapLinks.style.display = 'none';
     const arrivalInfo = document.getElementById('arrivalInfo');
     if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
+    toggleHomeVisuals(true);
   }
 
   // Arrival info panel (kept minimal; content depends on branch labels)
@@ -167,6 +179,12 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("placeText").textContent = 'בית המטופל/ת';
     }
   } catch (_) {}
+
+  // Final safeguard: if it's a home visit, switch illustration
+  try {
+    const homeVisitFinal = Boolean(isHomeFlag) || (branch && locationText && branch === locationText) || Boolean(isHome);
+    if (homeVisitFinal) toggleHomeVisuals(true);
+  } catch (_) { /* noop */ }
 
   // Owner WhatsApp for confirm/cancel
   const OWNER_PHONE = "972546257272";
