@@ -95,6 +95,41 @@
   setupTimeMask(document.getElementById('start'));
   setupTimeMask(document.getElementById('end'));
 
+  // Hints to show IL formats regardless of native picker UI
+  const dateHint = document.getElementById('dateHint');
+  const startHint = document.getElementById('startHint');
+  const endHint = document.getElementById('endHint');
+  function fmtDateIL(iso) {
+    if (!iso) return '';
+    const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return '';
+    return `${m[3]}/${m[2]}/${m[1]}`;
+  }
+  function fmtTime24(val) {
+    if (!val) return '';
+    const m = val.match(/^([0-2]?\d):([0-5]\d)$/);
+    if (!m) return '';
+    const hh = String(parseInt(m[1],10)).padStart(2,'0');
+    return `${hh}:${m[2]}`;
+  }
+  const dateEl2 = document.getElementById('date');
+  const startEl2 = document.getElementById('start');
+  const endEl2 = document.getElementById('end');
+  function updateHints(){
+    if (dateHint && dateEl2) {
+      const iso = (dateEl2.type === 'date') ? dateEl2.value : parseDateILToISO(dateEl2.value);
+      dateHint.textContent = iso ? fmtDateIL(iso) : '';
+    }
+    if (startHint && startEl2) startHint.textContent = fmtTime24(startEl2.value);
+    if (endHint && endEl2) endHint.textContent = fmtTime24(endEl2.value);
+  }
+  ['input','change','blur'].forEach(ev => {
+    if (dateEl2) dateEl2.addEventListener(ev, updateHints);
+    if (startEl2) startEl2.addEventListener(ev, updateHints);
+    if (endEl2) endEl2.addEventListener(ev, updateHints);
+  });
+  updateHints();
+
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
