@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
   const BASE_URL = "https://yonatandori.github.io/appointment/"; // no index.html needed
@@ -95,22 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
   setupTimeMask(document.getElementById('start'));
   setupTimeMask(document.getElementById('end'));
 
-  // Static options now defined in sender.html; no injection needed.
-  // Rename the last radio option label/value to "בית המטופל/ת" to match new phrasing
-  try {
-    const firstLoc = document.querySelector('input[name="location"]');
-    if (firstLoc) {
-      const container = firstLoc.closest('div');
-      const labels = container ? Array.from(container.querySelectorAll('label')) : [];
-      const last = labels[labels.length - 1];
-      if (last) {
-        const input = last.querySelector('input[name="location"]');
-        if (input) input.value = 'בית המטופל/ת|בית המטופל/ת';
-        // Replace text after input with the new label
-        last.innerHTML = '<input type="radio" name="location" value="בית המטופל/ת|בית המטופל/ת"> טיפול בבית המטופל/ת';
-      }
-    }
-  } catch (_) { /* ignore */ }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -126,13 +110,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const start = normalizeTime(startRaw);
     const end = normalizeTime(endRaw);
     const notes = document.getElementById("notes").value.trim();
-
     if (!date || !start || !end || !phoneRaw) {
-      alert("נא למלא תאריך, שעות ומספר טלפון.");
+      alert("Please enter a valid date, times, and phone.");
       return;
     }
 
-    // Location radio: value format "<branch>|<full address>"
     const locationRaw = document.querySelector('input[name="location"]:checked').value;
     const [branchName, addressFull] = locationRaw.split("|").map((v) => v.trim());
 
@@ -154,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const longUrl = `${BASE_URL}?${qs}`;
 
     // Try ultra-short packed code (<= 12 chars hash) when possible
-    const DEFAULT_TITLE = "עיסוי רפואי – טיפול מלא";
+    const DEFAULT_TITLE = "קביעת תור לעיסוי";
     const radios = Array.from(document.querySelectorAll('input[name="location"]'));
     const bIdx = Math.max(0, radios.findIndex(r => r.checked));
     const baseMs = Date.parse("2025-01-01T00:00:00.000Z");
@@ -164,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const startMin = Math.floor((startMs - baseMs) / 60000);
 
     let shortUrl;
-    const canUltraShort = (notes === "") && (title === DEFAULT_TITLE) && durMin > 0 && durMin <= 127 && startMin >= 0 && startMin <= 0x7fffff && bIdx >= 0 && bIdx <= 3;
+    const canUltraShort = false;
     if (canUltraShort) {
       // Pack bits: v(3)=1, b(2), start(23), dur(7), pad(5) -> 40 bits -> 7 base64url chars
       let x = 0n;
@@ -192,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
     preview.innerHTML = `
       <p><strong>קישור לתור:</strong></p>
       <a id="apptLink" href="${shortUrl}" target="_blank">${shortUrl}</a><br><br>
-      <button id="btnSendWA" class="btn-whatsapp" type="button">שליחה ב‑WhatsApp ללקוח/ה</button>
+      <button id="btnSendWA" class="btn-whatsapp" type="button">שליחה ב‑WhatsApp</button>
     `;
 
     const waBtn = document.getElementById("btnSendWA");
@@ -205,14 +187,8 @@ document.addEventListener("DOMContentLoaded", function () {
       } catch (e) {
         console.warn('TinyURL unavailable, sending original URL', e);
       }
-      const msg = `שלום ${client}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${finalUrl}`;
+      const msg = `Shalom ${client}, here is your appointment link:\n${finalUrl}`;
       const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(waLink, "_blank");
       waBtn.disabled = false;
     });
-  });
-
-  // Footer year
-  const yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-});
