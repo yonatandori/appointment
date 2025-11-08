@@ -43,7 +43,7 @@
   }
 
   function setupTimeMask(el) {
-    if (!el) return;
+    if (!el || el.type !== 'text') return;
     el.addEventListener('input', () => {
       let digits = el.value.replace(/\D/g, '').slice(0, 4);
       if (digits.length >= 3) {
@@ -72,7 +72,7 @@
   }
 
   function setupDateMask(el) {
-    if (!el) return;
+    if (!el || el.type !== 'text') return;
     el.addEventListener('input', () => {
       let digits = el.value.replace(/\D/g, '').slice(0, 8);
       let out = '';
@@ -103,12 +103,15 @@
     const client = document.getElementById("client").value.trim();
     const phoneRaw = document.getElementById("phone").value.trim();
     const title = document.getElementById("title").value.trim();
-    const dateRaw = document.getElementById("date").value;
-    const startRaw = document.getElementById("start").value;
-    const endRaw = document.getElementById("end").value;
-    const date = parseDateILToISO(dateRaw);
-    const start = normalizeTime(startRaw);
-    const end = normalizeTime(endRaw);
+    const dateEl = document.getElementById("date");
+    const startEl = document.getElementById("start");
+    const endEl = document.getElementById("end");
+    const dateRaw = dateEl.value;
+    const startRaw = startEl.value;
+    const endRaw = endEl.value;
+    const date = (dateEl && dateEl.type === 'date') ? dateRaw : parseDateILToISO(dateRaw);
+    const start = (startEl && startEl.type === 'time') ? startRaw : normalizeTime(startRaw);
+    const end = (endEl && endEl.type === 'time') ? endRaw : normalizeTime(endRaw);
     const notes = document.getElementById("notes").value.trim();
     if (!date || !start || !end || !phoneRaw) {
       alert("Please enter a valid date, times, and phone.");
