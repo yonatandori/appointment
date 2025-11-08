@@ -1,19 +1,3 @@
-// פונקציה לקיצור קישור באמצעות TinyURL
-async function shortenUrl(longUrl) {
-  const apiUrl = "https://tinyurl.com/api-create.php?url=" + encodeURIComponent(longUrl);
-  try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) {
-      throw new Error("shorten failed");
-    }
-    const shortUrl = await res.text();
-    return shortUrl.trim();
-  } catch (e) {
-    console.error("Shorten URL failed, using original:", e);
-    return longUrl; // אם נכשל – נחזיר את הקישור המקורי
-  }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
@@ -40,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // מיקום (פרדסיה / תל אביב)
+    // מיקום (פרדסיה / תל אביב / בית המטופל)
     const locInput = document.querySelector('input[name="location"]:checked');
     let branchName = "פרדסיה";
     let addressFull = "רח׳ הפרג 6, פרדסיה";
@@ -59,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const startFull = `${date}T${start}`;
     const endFull   = `${date}T${end}`;
 
-    // בניית הקישור הארוך לעמוד המטופל
+    // בניית הקישור לעמוד המטופל
     const url =
       `${BASE_URL}?` +
       `client=${client}` +
@@ -86,15 +70,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const waBtn = document.getElementById("btnSendWA");
 
-    waBtn.addEventListener("click", async function () {
+    waBtn.addEventListener("click", function () {
       const urlToSend = document.getElementById("apptLink").href;
-
-      // ניסיון לקצר את הקישור
-      const shortUrl = await shortenUrl(urlToSend);
-
-      const msg = `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n`;
-const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}${encodeURIComponent(shortUrl)}`;
-
+      const msg = `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${urlToSend}`;
+      const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(waLink, "_blank");
     });
   });
@@ -102,4 +81,3 @@ const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}${encodeUR
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 });
-
