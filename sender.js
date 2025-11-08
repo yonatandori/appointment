@@ -92,11 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
       // ניסיון לקצר את הקישור
       const shortUrl = await shortenUrl(urlToSend);
 
-      const msg =
-        `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n` +
-        shortUrl;
+      const msg = `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n`;
+const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}${encodeURIComponent(shortUrl)}`;
 
-      const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(waLink, "_blank");
     });
   });
@@ -104,3 +102,4 @@ document.addEventListener("DOMContentLoaded", function () {
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 });
+
