@@ -1,89 +1,189 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const apptEl = document.getElementById("appt");
-  const params = new URLSearchParams(window.location.search);
 
-  // שליפת נתונים מה-URL + מיקום
-const client = params.get("client") || "מטופל יקר";
-const title = params.get("title") || "עיסוי רפואי";
-const start = params.get("start") || "2025-10-22T09:00";
-const end = params.get("end") || "2025-10-22T10:00";
-const notes = params.get("notes") || "";
-const location = params.get("location") || "פרדסיה, רח׳ הפרג 6"; // ברירת מחדל
-const branch = params.get("branch") || "פרדסיה";
+  // URL-safe Base64 helpers (UTF-8 aware)
+  function b64UrlEncode(str) {
+    return btoa(unescape(encodeURIComponent(str)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/g, "");
+  }
+  function b64UrlDecode(str) {
+    let s = str.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = s.length % 4;
+    if (pad) s += "=".repeat(4 - pad);
+    return decodeURIComponent(escape(atob(s)));
+  }
+  function b64UrlToBytes(str) {
+    let s = str.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = s.length % 4; if (pad) s += "=".repeat(4 - pad);
+    const bin = atob(s);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
 
-// קישורי ניווט
-const encodedAddress = encodeURIComponent(location);
-const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-const wazeLink = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
+  // Prefer compact hash payload; fallback to query params
+  let client = "";
+  let title = "";
+  let start = "";
+  let end = "";
+  let notes = "";
+  let locationText = "";
+  let branch = "";
+  let isHomeFlag = false;
+  const DEFAULT_TITLE = "עיסוי רפואי – טיפול מלא";
+  const BRANCHES = [
+    { branch: "תל אביב", location: "רח׳ הפרג 6, פרדסיה" },
+    { branch: "פרדסיה", location: "רח׳ הפרג 6, פרדסיה" },
+    { branch: "בית הלקוח", location: "בית הלקוח" }
+  ];
 
-// שמירת הנתונים באלמנט
-apptEl.dataset.clientName = client;
-apptEl.dataset.title = title;
-apptEl.dataset.startLocal = start;
-apptEl.dataset.endLocal = end;
-apptEl.dataset.location = location;
-apptEl.dataset.notes = notes;
+  const hash = window.location.hash || "";
+  if (hash && hash.length > 1) {
+    // Try ultra-short packed format first: #!<b64url>
+    if (hash.startsWith("#!")) {
+      try {
+        const bytes = b64UrlToBytes(hash.slice(2));
+        if (bytes.length >= 5) {
+          let x = 0n;
+          for (let i = 0; i < 5; i++) x = (x << 8n) | BigInt(bytes[i]);
+          x >>= 5n; // drop pad(5)
+          const dur = Number(x & 0x7fn); x >>= 7n;
+          const startMin = Number(x & 0x7fffffn); x >>= 23n;
+          const bIdx = Number(x & 0x3n); x >>= 2n;
+          const ver = Number(x & 0x7n);
+          if (ver === 1) {
+            const baseMs = Date.parse("2025-01-01T00:00:00.000Z");
+            const startMs = baseMs + startMin * 60000;
+            const endMs = startMs + dur * 60000;
+            const b = BRANCHES[bIdx] || BRANCHES[0];
+            branch = b.branch;
+            locationText = b.location;
+            start = new Date(startMs).toISOString().slice(0, 16);
+            end = new Date(endMs).toISOString().slice(0, 16);
+            title = DEFAULT_TITLE;
+            notes = "";
+          }
+        }
+      } catch (_) { /* ignore */ }
+    }
 
-// הצגת הכתובת למטופל + קישורי מפה
-document.getElementById("placeText").textContent = `${branch} – ${location}`;
-document.getElementById("linkGmaps").href = gmapsLink;
-document.getElementById("linkWaze").href = wazeLink;
-// פרטי הגעה משתנים לפי הסניף
-const arrivalInfo = document.getElementById("arrivalInfo");
+    // Try JSON base64Url payload: #<b64url>
+    if (!start) {
+      try {
+        const payload = JSON.parse(b64UrlDecode(hash.slice(1)));
+        client = payload.c || "";
+        title = payload.t || DEFAULT_TITLE;
+        start = payload.s || "";
+        end = payload.e || "";
+        notes = payload.n || "";
+        locationText = payload.l || "";
+        branch = payload.b || "";
+        isHomeFlag = Boolean(payload.h);
+      } catch (_) { /* ignore */ }
+    }
+  } else {
+    const params = new URLSearchParams(window.location.search);
+    client = params.get("client") || "";
+    title = params.get("title") || DEFAULT_TITLE;
+    start = params.get("start") || "";
+    end = params.get("end") || "";
+    notes = params.get("notes") || "";
+    locationText = params.get("location") || "";
+    branch = params.get("branch") || "";
+    const homeQ = params.get("home");
+    if (homeQ === '1') isHomeFlag = true;
+  }
 
-if (branch === "תל אביב") {
-  arrivalInfo.innerHTML = `
-    <h3>פרטי הגעה – תל אביב</h3>
-    <p>
-      הקליניקה ממוקמת בקומת הקרקע ברחוב הזוהר 32 (בבלי).<br>
-      קיימות שתי כניסות:<br>
-      • <strong>קליניקה 1</strong> – הכניסה משמאל לדלת הכניסה לבניין, ליד המכולת.<br>
-      • <strong>קליניקה 2</strong> – הצמודה לדלת הכניסה הראשית של הבניין.
-    </p>
-  `;
-} else {
-  arrivalInfo.innerHTML = `
-    <h3>פרטי הגעה – פרדסיה</h3>
-    <p>
-      הקליניקה נמצאת בקומת הקרקע ברחוב הפרג 6, עם גישה נוחה וחניה זמינה לרוב ממש בסמוך.<br>
-      במידה ולא מצאת חניה, ניתן ליצור קשר בהגעה ואכוון אותך למקום פנוי צמוד לקליניקה.
-    </p>
-  `;
-}
+  // Build map links
+  const encodedAddress = encodeURIComponent(locationText || "");
+  const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+  const wazeLink = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
 
+  // Store data attributes
+  apptEl.dataset.clientName = client;
+  apptEl.dataset.title = title;
+  apptEl.dataset.startLocal = start;
+  apptEl.dataset.endLocal = end;
+  apptEl.dataset.location = locationText;
+  apptEl.dataset.notes = notes;
 
-  // הצגה על המסך
-  document.getElementById("clientName").textContent = decodeURIComponent(client);
-  document.getElementById("dateText").textContent = new Date(start).toLocaleDateString("he-IL");
-  document.getElementById("timeText").textContent =
-    new Date(start).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"}) +
-    " - " +
-    new Date(end).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
-  document.getElementById("notesText").textContent = decodeURIComponent(notes);
-  document.getElementById("placeText").textContent = location;
+  // Display fields
+  const displayLocation = branch ? `${branch} – ${locationText}` : locationText;
+  document.getElementById("clientName").textContent = client;
+  document.getElementById("dateText").textContent = start ? new Date(start).toLocaleDateString("he-IL") : "";
+  document.getElementById("timeText").textContent = (start && end)
+    ? `${new Date(start).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })} - ${new Date(end).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}`
+    : "";
+  document.getElementById("notesText").textContent = notes || "";
+  document.getElementById("placeText").textContent = displayLocation;
+  document.getElementById("linkGmaps").href = gmapsLink;
+  document.getElementById("linkWaze").href = wazeLink;
 
-  // עדכון כפתורי וואטסאפ
+  // Normalize and handle home-visit (branch equals location)
+  (function(){
+    try {
+      if (branch && locationText && branch === locationText) {
+        branch = 'בית המטופל/ת';
+        locationText = branch;
+        document.getElementById("placeText").textContent = branch;
+        const mapLinks = document.querySelector('.map-links');
+        if (mapLinks) mapLinks.style.display = 'none';
+        const arrivalInfo = document.getElementById('arrivalInfo');
+        if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
+      }
+    } catch (_) {}
+  })();
+
+  // Hide navigation/maps if home-visit
+  const isHome = (branch === 'בית הלקוח') || (locationText === 'בית הלקוח');
+  if (isHome) {
+    const mapLinks = document.querySelector('.map-links');
+    if (mapLinks) mapLinks.style.display = 'none';
+    const arrivalInfo = document.getElementById('arrivalInfo');
+    if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
+  }
+
+  // Arrival info panel (kept minimal; content depends on branch labels)
+  const arrivalInfo = document.getElementById("arrivalInfo");
+  arrivalInfo.innerHTML = arrivalInfo.innerHTML || ""; // no-op placeholder to keep existing HTML if present
+
+  // If home-visit was selected, show surcharge info instead of directions
+  try {
+    const isHomeByEquality = branch && locationText && branch === locationText;
+    if ((isHomeFlag || isHomeByEquality) && arrivalInfo) {
+      const mapLinks = document.querySelector('.map-links');
+      if (mapLinks) mapLinks.style.display = 'none';
+      arrivalInfo.style.display = '';
+      arrivalInfo.innerHTML = `
+        <h3>טיפול בבית המטופל/ת</h3>
+        <p>
+          לתשומת לבך: למחיר הטיפול תתווסף תוספת בהתאם למרחק הנסיעה,
+          לקומה ולמעלית/ללא מעלית, כפי שסוכם מראש.
+        </p>
+      `;
+      // Ensure the place text shows the correct label
+      document.getElementById("placeText").textContent = 'בית המטופל/ת';
+    }
+  } catch (_) {}
+
+  // Owner WhatsApp for confirm/cancel
   const OWNER_PHONE = "972546257272";
   const waBase = `https://wa.me/${OWNER_PHONE}?text=`;
   const dateText = document.getElementById("dateText").textContent;
   const timeText = document.getElementById("timeText").textContent;
 
-  const msgConfirm = `שלום יונתן, כאן ${decodeURIComponent(client)}. אני מאשר הגעה לטיפול "${decodeURIComponent(title)}" בתאריך ${dateText} בשעה ${timeText}.`;
-  const msgCancel = `שלום יונתן, כאן ${decodeURIComponent(client)}. אני נאלץ לבטל את התור שנקבע ל-${dateText} בשעה ${timeText}.`;
-
+  const msgConfirm = `שלום, כאן יונתן. מאשר/ת הגעה לתור "${title}" בתאריך ${dateText} בשעות ${timeText}.`;
+  const msgCancel = `שלום, כאן יונתן. מבקש/ת לבטל את התור בתאריך ${dateText} בשעות ${timeText}.`;
   document.getElementById("btnConfirm").href = waBase + encodeURIComponent(msgConfirm);
-  document.getElementById("btnCancel").href  = waBase + encodeURIComponent(msgCancel);
+  document.getElementById("btnCancel").href = waBase + encodeURIComponent(msgCancel);
 
-  // כפתור "הוסף ליומן"
-  const startUTC = new Date(start).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const endUTC = new Date(end).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUTC}/${endUTC}&details=${encodeURIComponent(notes)}&location=${encodeURIComponent(location)}`;
-
+  // Google Calendar link (UTC format)
+  const startUTC = start ? new Date(start).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : "";
+  const endUTC = end ? new Date(end).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : "";
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUTC}/${endUTC}&details=${encodeURIComponent(notes)}&location=${encodeURIComponent(locationText)}`;
   const btnAdd = document.getElementById("btnAddToCal");
   btnAdd.href = gcalUrl;
   btnAdd.target = "_blank";
-
-  console.log("✅ נתוני התור נטענו בהצלחה למטופל:", client, title, start);
 });
-
-
