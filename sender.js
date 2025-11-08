@@ -57,14 +57,30 @@ document.addEventListener("DOMContentLoaded", function() {
   `;
 
   // מאזין ללחיצה על כפתור וואטסאפ
-  const waBtn = document.getElementById("btnSendWA");
-  waBtn.addEventListener("click", () => {
+const waBtn = document.getElementById("btnSendWA");
+waBtn.addEventListener("click", async () => {
+  try {
     const urlToSend = document.getElementById("apptLink").href;
-    const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${urlToSend}`;
+    let phone = phoneRaw.replace(/\D/g, "");
+    if (phone.startsWith("0")) phone = "972" + phone.substring(1);
+
+    // מקצר את הקישור לפני השליחה
+    const shortUrl = await shortenUrl(urlToSend);
+
+    const msg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${shortUrl}`;
     const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(waLink, "_blank");
-  });
+  } catch (err) {
+    alert("לא הצלחתי לקצר את הקישור, אשלח את המלא במקום.");
+    const urlToSend = document.getElementById("apptLink").href;
+    let phone = phoneRaw.replace(/\D/g, "");
+    if (phone.startsWith("0")) phone = "972" + phone.substring(1);
+    const fallbackMsg = `שלום ${decodeURIComponent(client)}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${urlToSend}`;
+    const fallbackLink = `https://wa.me/${phone}?text=${encodeURIComponent(fallbackMsg)}`;
+    window.open(fallbackLink, "_blank");
+  }
 });
+
 
   // הדפסת שנה בפוטר (אם קיימת)
   const yearEl = document.getElementById("year");
@@ -72,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
