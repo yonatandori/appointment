@@ -3,56 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>שליחת תור – יונתן דורי</title>
+  <title>שליחת תור למטופל – יונתן דורי</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <div class="container">
-    <h1>שליחת תור למטופל</h1>
+  <div class="main-container">
+    <header class="header">
+      <img src="logo.png" alt="לוגו יונתן דורי" class="logo">
+      <h1 class="title">שליחת תור למטופל</h1>
+    </header>
 
-    <form id="sendForm">
-      <label>שם המטופל:</label>
-      <input type="text" id="client" required>
+    <section class="form-section">
+      <form id="sendForm" class="styled-form">
 
-      <label>טלפון:</label>
-      <input type="text" id="phone" required>
+        <div class="form-group">
+          <label for="client">שם המטופל:</label>
+          <input type="text" id="client" required>
+        </div>
 
-      <label>כותרת טיפול:</label>
-      <input type="text" id="title" value="עיסוי רפואי">
+        <div class="form-group">
+          <label for="phone">טלפון:</label>
+          <input type="text" id="phone" required>
+        </div>
 
-      <label>תאריך:</label>
-      <input type="date" id="date" required>
+        <div class="form-group">
+          <label for="title">כותרת טיפול:</label>
+          <input type="text" id="title" value="עיסוי רפואי">
+        </div>
 
-      <label>שעת התחלה:</label>
-      <input type="time" id="start" required>
+        <div class="form-group-inline">
+          <div>
+            <label for="date">תאריך:</label>
+            <input type="date" id="date" required>
+          </div>
+          <div>
+            <label for="start">שעת התחלה:</label>
+            <input type="time" id="start" required>
+          </div>
+          <div>
+            <label for="end">שעת סיום:</label>
+            <input type="time" id="end" required>
+          </div>
+        </div>
 
-      <label>שעת סיום:</label>
-      <input type="time" id="end" required>
+        <div class="form-group">
+          <label for="notes">הערות:</label>
+          <textarea id="notes" rows="3" placeholder="הערות למטופל (לא חובה)"></textarea>
+        </div>
 
-      <label>הערות:</label>
-      <textarea id="notes" rows="3" placeholder="הערות למטופל (אופציונלי)"></textarea>
+        <div class="form-group">
+          <label>מיקום הטיפול:</label>
+          <div class="location-options">
+            <label>
+              <input type="radio" name="location" value="פרדסיה|רח׳ הפרג 6, פרדסיה" checked>
+              פרדסיה – רח׳ הפרג 6
+            </label><br>
+            <label>
+              <input type="radio" name="location" value="תל אביב|רח׳ הזוהר 32 (בבלי), תל אביב">
+              תל אביב – רח׳ הזוהר 32 (בבלי)
+            </label><br>
+            <label>
+              <input type="radio" name="location" value="בית המטופל|טיפול בבית המטופל (הכתובת כפי שסוכמה מראש עם יונתן)">
+              טיפול בבית המטופל
+            </label>
+          </div>
+        </div>
 
-      <label>מיקום הטיפול:</label>
-      <div style="text-align:right; margin-bottom:15px;">
-        <label>
-          <input type="radio" name="location" value="פרדסיה|רח׳ הפרג 6, פרדסיה" checked>
-          פרדסיה – רח׳ הפרג 6
-        </label><br>
-        <label>
-          <input type="radio" name="location" value="תל אביב|רח׳ הזוהר 32 (בבלי), תל אביב">
-          תל אביב – רח׳ הזוהר 32 (בבלי)
-        </label><br>
-        <label>
-          <input type="radio" name="location" value="בית המטופל|טיפול בבית המטופל (הכתובת כפי שסוכמה מראש עם יונתן)">
-          טיפול בבית המטופל
-        </label>
-      </div>
+        <div class="form-group">
+          <button type="submit" class="btn-primary">צור קישור</button>
+        </div>
 
-      <button type="submit" class="btn-primary">צור קישור</button>
-    </form>
+      </form>
 
-    <div id="preview" class="preview-box" style="display:none;"></div>
+      <div id="preview" class="preview-box" style="display:none;"></div>
+    </section>
+
+    <footer class="footer">
+      <p>© <span id="year"></span> יונתן דורי – טיפול ועיסוי רפואי</p>
+    </footer>
   </div>
 
   <script src="sender.js"></script>
