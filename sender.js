@@ -3,48 +3,45 @@ document.addEventListener("DOMContentLoaded", function () {
   const preview = document.getElementById("preview");
   const BASE_URL = "https://yonatandori.github.io/appointment/index.html";
 
-  // פונקציה לקיצור קישור באמצעות TinyURL
-  async function shortenUrl(longUrl) {
-    const apiUrl = "https://tinyurl.com/api-create.php?url=" + encodeURIComponent(longUrl);
-    const res = await fetch(apiUrl);
-    if (!res.ok) {
-      throw new Error("URL shortener failed");
-    }
-    const shortUrl = await res.text();
-    return shortUrl.trim();
-  }
-
   if (!form) {
-    console.error("לא נמצא טופס sendForm");
+    console.error("sendForm not found");
     return;
   }
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const clientRaw = document.getElementById("client").value.trim();
-    const phoneRaw = document.getElementById("phone").value.trim();
-    const titleRaw = document.getElementById("title").value.trim();
-    const date = document.getElementById("date").value;
-    const start = document.getElementById("start").value;
-    const end = document.getElementById("end").value;
-    const notesRaw = document.getElementById("notes").value.trim();
+    const phoneRaw  = document.getElementById("phone").value.trim();
+    const titleRaw  = document.getElementById("title").value.trim();
+    const date      = document.getElementById("date").value;
+    const start     = document.getElementById("start").value;
+    const end       = document.getElementById("end").value;
+    const notesRaw  = document.getElementById("notes").value.trim();
 
-    if (!clientRaw || !date || !start || !end || !phoneRaw) {
-      alert("אנא מלא את כל השדות הנדרשים כולל שם ומספר טלפון.");
+    if (!clientRaw || !phoneRaw || !date || !start || !end) {
+      alert("אנא מלא שם, טלפון, תאריך ושעות.");
       return;
     }
 
     // מיקום (פרדסיה / תל אביב)
-    const locationRaw = document.querySelector('input[name="location"]:checked').value;
-    const [branchName, addressFull] = locationRaw.split("|").map((v) => v.trim());
+    const locInput = document.querySelector('input[name="location"]:checked');
+    let branchName = "פרדסיה";
+    let addressFull = "רח׳ הפרג 6, פרדסיה";
+
+    if (locInput) {
+      const locationRaw = locInput.value; // למשל: "פרדסיה|רח׳ הפרג 6, פרדסיה"
+      const parts = locationRaw.split("|");
+      branchName = (parts[0] || branchName).trim();
+      addressFull = (parts[1] || addressFull).trim();
+    }
 
     const client = encodeURIComponent(clientRaw);
-    const title = encodeURIComponent(titleRaw);
-    const notes = encodeURIComponent(notesRaw);
+    const title  = encodeURIComponent(titleRaw);
+    const notes  = encodeURIComponent(notesRaw);
 
     const startFull = `${date}T${start}`;
-    const endFull = `${date}T${end}`;
+    const endFull   = `${date}T${end}`;
 
     // בניית הקישור הארוך לעמוד המטופל
     const url =
@@ -68,39 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
     preview.innerHTML = `
       <p><strong>קישור נוצר בהצלחה:</strong></p>
       <a id="apptLink" href="${decodedUrl}" target="_blank">${decodedUrl}</a><br><br>
-      <button id="btnSendWA" class="btn-whatsapp" type="button">📲 שלח למטופל בוואטסאפ</button>
+      <a id="btnSendWA" class="btn-whatsapp" target="_blank">📲 שלח למטופל בוואטסאפ</a>
     `;
 
     const waBtn = document.getElementById("btnSendWA");
 
-    waBtn.addEventListener("click", async () => {
-      try {
-        const urlToSend = document.getElementById("apptLink").href;
-
-        // נסיון לקצר את הקישור
-        const shortUrl = await shortenUrl(urlToSend);
-
-        const msg =
-          `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n` +
-          shortUrl;
-
-        const waLink =
-          `https://wa.me/${phone}?text=` + encodeURIComponent(msg);
-
-        window.open(waLink, "_blank");
-      } catch (err) {
-        // אם קיצור נכשל – שולחים את הקישור הארוך
-        console.error("URL shortener error:", err);
-        const urlToSend = document.getElementById("apptLink").href;
-        const msg =
-          `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n` +
-          urlToSend;
-
-        const waLink =
-          `https://wa.me/${phone}?text=` + encodeURIComponent(msg);
-
-        window.open(waLink, "_blank");
-      }
+    waBtn.addEventListener("click", function () {
+      const urlToSend = document.getElementById("apptLink").href;
+      const msg = `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${urlToSend}`;
+      const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(waLink, "_blank");
     });
   });
 
