@@ -1,3 +1,19 @@
+// פונקציה לקיצור קישור באמצעות TinyURL
+async function shortenUrl(longUrl) {
+  const apiUrl = "https://tinyurl.com/api-create.php?url=" + encodeURIComponent(longUrl);
+  try {
+    const res = await fetch(apiUrl);
+    if (!res.ok) {
+      throw new Error("shorten failed");
+    }
+    const shortUrl = await res.text();
+    return shortUrl.trim();
+  } catch (e) {
+    console.error("Shorten URL failed, using original:", e);
+    return longUrl; // אם נכשל – נחזיר את הקישור המקורי
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
@@ -32,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (locInput) {
       const locationRaw = locInput.value; // למשל: "פרדסיה|רח׳ הפרג 6, פרדסיה"
       const parts = locationRaw.split("|");
-      branchName = (parts[0] || branchName).trim();
+      branchName  = (parts[0] || branchName).trim();
       addressFull = (parts[1] || addressFull).trim();
     }
 
@@ -70,9 +86,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const waBtn = document.getElementById("btnSendWA");
 
-    waBtn.addEventListener("click", function () {
+    waBtn.addEventListener("click", async function () {
       const urlToSend = document.getElementById("apptLink").href;
-      const msg = `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n${urlToSend}`;
+
+      // ניסיון לקצר את הקישור
+      const shortUrl = await shortenUrl(urlToSend);
+
+      const msg =
+        `שלום ${clientRaw}, זהו קישור עם פרטי התור שלך אצל יונתן דורי:\n` +
+        shortUrl;
+
       const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(waLink, "_blank");
     });
