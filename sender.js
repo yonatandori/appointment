@@ -1,232 +1,158 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("sendForm");
-  const preview = document.getElementById("preview");
-  const BASE_URL = "https://yonatandori.github.io/appointment/"; // no index.html needed
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('sendForm');
+  const preview = document.getElementById('preview');
+  const BASE_URL = 'https://yonatandori.github.io/appointment/';
 
-  // URL-safe Base64 helpers (UTF-8 aware)
-  function b64UrlEncode(str) {
-    return btoa(unescape(encodeURIComponent(str)))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-  }
-  function b64UrlFromBytes(bytes) {
-    let bin = "";
-    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-  }
+  // --- Helpers ---
+  const b64url = (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'');
+  const pad2 = (n) => String(n).padStart(2,'0');
 
-  // Simplest TinyURL shortener with fallback
-  async function shortenWithTiny(url) {
-    const api = 'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url);
-    const res = await fetch(api, { method: 'GET' });
-    if (!res.ok) throw new Error('TinyURL request failed');
-    const txt = (await res.text()).trim();
-    if (!/^https?:\/\//i.test(txt)) throw new Error('TinyURL bad response');
-    return txt;
-  }
-
-  if (!form) {
-    console.error("sendForm element not found");
-    return;
-  }
-
-  // ---- Input masks and parsing for Israeli formats ----
-  function normalizeTime(val) {
-    if (!val) return null;
-    const m = String(val).trim().match(/^([0-2]?\d)[:.]?([0-5]?\d)?$/);
-    if (!m) return null;
-    let hh = parseInt(m[1], 10);
-    let mm = m[2] != null ? parseInt(m[2], 10) : 0;
-    if (isNaN(hh) || isNaN(mm) || hh > 23 || mm > 59) return null;
-    return String(hh).padStart(2, '0') + ":" + String(mm).padStart(2, '0');
-  }
-
-  function setupTimeMask(el) {
-    if (!el || el.type !== 'text') return;
-    el.addEventListener('input', () => {
-      let digits = el.value.replace(/\D/g, '').slice(0, 4);
-      if (digits.length >= 3) {
-        el.value = digits.slice(0, 2) + ':' + digits.slice(2);
-      } else {
-        el.value = digits;
-      }
-    });
-    const fix = () => {
-      const n = normalizeTime(el.value);
-      if (n) el.value = n;
-    };
-    el.addEventListener('blur', fix);
-    el.addEventListener('change', fix);
-  }
-
-  function parseDateILToISO(val) {
-    if (!val) return null;
+  function parseDateILToISO(val){
+    if(!val) return null;
     const m = String(val).trim().match(/^\s*(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})\s*$/);
-    if (!m) return null;
-    let d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = parseInt(m[3], 10);
-    if (isNaN(d) || isNaN(mo) || isNaN(y) || y < 1900 || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
-    const daysInMonth = [31, (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    if (d > daysInMonth[mo - 1]) return null;
-    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    if(!m) return null;
+    let d=+m[1], mo=+m[2], y=+m[3];
+    if(y<1900||mo<1||mo>12||d<1||d>31) return null;
+    const dim=[31,(y%4===0&& (y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31][mo-1];
+    if(d>dim) return null;
+    return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+  function normalizeTime(val){
+    if(!val) return null;
+    const m = String(val).trim().match(/^([0-2]?\d):([0-5]\d)$/);
+    if(!m) return null;
+    let hh=+m[1], mm=+m[2];
+    if(hh>23) return null;
+    return `${pad2(hh)}:${pad2(mm)}`;
   }
 
-  function setupDateMask(el) {
-    if (!el || el.type !== 'text') return;
-    el.addEventListener('input', () => {
-      let digits = el.value.replace(/\D/g, '').slice(0, 8);
-      let out = '';
-      if (digits.length <= 2) out = digits;
-      else if (digits.length <= 4) out = digits.slice(0, 2) + '/' + digits.slice(2);
-      else out = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
-      el.value = out;
-    });
-    el.addEventListener('blur', () => {
-      const iso = parseDateILToISO(el.value);
-      if (iso) {
-        const [y, m, d] = iso.split('-');
-        el.value = `${d}/${m}/${y}`;
-      }
-    });
+  // --- Custom Pickers ---
+  const dateInput = document.getElementById('date');
+  const startInput = document.getElementById('start');
+  const endInput = document.getElementById('end');
+
+  // Date picker elements
+  const dp = {
+    overlay: document.getElementById('datePicker'),
+    day: document.getElementById('dp-day'),
+    month: document.getElementById('dp-month'),
+    year: document.getElementById('dp-year'),
+    ok: document.getElementById('dp-ok'),
+    cancel: document.getElementById('dp-cancel')
+  };
+  // Time picker elements
+  const tp = {
+    overlay: document.getElementById('timePicker'),
+    hour: document.getElementById('tp-hour'),
+    minute: document.getElementById('tp-minute'),
+    ok: document.getElementById('tp-ok'),
+    cancel: document.getElementById('tp-cancel'),
+    target: null
+  };
+  const show=(el)=>{ if(el){ el.style.display='flex'; el.setAttribute('aria-hidden','false'); } };
+  const hide=(el)=>{ if(el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); } };
+  const daysInMonth=(y,m)=> new Date(y,m,0).getDate();
+
+  function fillDateOptions(y,m,d){
+    const nowY=new Date().getFullYear();
+    const years=[]; for(let i=nowY-1;i<=nowY+2;i++) years.push(i);
+    dp.year.innerHTML = years.map(v=>`<option value="${v}">${v}</option>`).join(''); dp.year.value=String(y);
+    dp.month.innerHTML = Array.from({length:12},(_,i)=>`<option value="${i+1}">${pad2(i+1)}</option>`).join(''); dp.month.value=String(m);
+    const dim=daysInMonth(y,m);
+    dp.day.innerHTML = Array.from({length:dim},(_,i)=>`<option value="${i+1}">${pad2(i+1)}</option>`).join(''); dp.day.value=String(Math.min(d,dim));
+  }
+  function openDatePicker(target){
+    let d=1,m=1,y=new Date().getFullYear();
+    const iso = parseDateILToISO(target.value);
+    if(iso){ const [yy,mm,dd]=iso.split('-'); y=+yy; m=+mm; d=+dd; }
+    fillDateOptions(y,m,d); show(dp.overlay);
+    const onChange=()=>{ const ny=+dp.year.value, nm=+dp.month.value, nd=+dp.day.value; fillDateOptions(ny,nm,nd); };
+    dp.month.onchange=onChange; dp.year.onchange=onChange;
+    dp.ok.onclick=()=>{ const ny=dp.year.value, nm=dp.month.value, nd=dp.day.value; target.value=`${pad2(nd)}/${pad2(nm)}/${ny}`; hide(dp.overlay); };
+    dp.cancel.onclick=()=> hide(dp.overlay);
+    dp.overlay.onclick=(e)=>{ if(e.target===dp.overlay) hide(dp.overlay); };
+  }
+  function fillTimeOptions(hh,mm){
+    tp.hour.innerHTML = Array.from({length:24},(_,i)=>`<option value="${pad2(i)}">${pad2(i)}</option>`).join(''); tp.hour.value=pad2(hh);
+    tp.minute.innerHTML = Array.from({length:60},(_,i)=>`<option value="${pad2(i)}">${pad2(i)}</option>`).join(''); tp.minute.value=pad2(mm);
+  }
+  function openTimePicker(target){
+    const n = normalizeTime(target.value) || '09:00';
+    const [hh,mm] = n.split(':').map(x=>+x);
+    fillTimeOptions(hh,mm); tp.target=target; show(tp.overlay);
+  }
+  if(dateInput){ dateInput.addEventListener('click',()=>openDatePicker(dateInput)); dateInput.addEventListener('keydown',e=>e.preventDefault()); }
+  [startInput,endInput].forEach(inp=>{ if(!inp) return; inp.addEventListener('click',()=>openTimePicker(inp)); inp.addEventListener('keydown',e=>e.preventDefault()); });
+  if(tp.ok) tp.ok.onclick=()=>{ if(!tp.target){ hide(tp.overlay); return; } tp.target.value=`${tp.hour.value}:${tp.minute.value}`; hide(tp.overlay); };
+  if(tp.cancel) tp.cancel.onclick=()=> hide(tp.overlay);
+  if(tp.overlay) tp.overlay.onclick=(e)=>{ if(e.target===tp.overlay) hide(tp.overlay); };
+
+  // --- Submit handling ---
+  async function shortenWithTiny(url){
+    try{
+      const res = await fetch('https://tinyurl.com/api-create.php?url='+encodeURIComponent(url));
+      if(!res.ok) throw new Error('tiny failed');
+      const t = (await res.text()).trim();
+      if(!/^https?:\/\//i.test(t)) throw new Error('tiny bad');
+      return t;
+    }catch(_){ return url; }
   }
 
-  // Attach masks to inputs (enforce 24h HH:MM and DD/MM/YYYY)
-  setupDateMask(document.getElementById('date'));
-  setupTimeMask(document.getElementById('start'));
-  setupTimeMask(document.getElementById('end'));
-
-  // Hints to show IL formats regardless of native picker UI
-  const dateHint = document.getElementById('dateHint');
-  const startHint = document.getElementById('startHint');
-  const endHint = document.getElementById('endHint');
-  function fmtDateIL(iso) {
-    if (!iso) return '';
-    const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!m) return '';
-    return `${m[3]}/${m[2]}/${m[1]}`;
-  }
-  function fmtTime24(val) {
-    if (!val) return '';
-    const m = val.match(/^([0-2]?\d):([0-5]\d)$/);
-    if (!m) return '';
-    const hh = String(parseInt(m[1],10)).padStart(2,'0');
-    return `${hh}:${m[2]}`;
-  }
-  const dateEl2 = document.getElementById('date');
-  const startEl2 = document.getElementById('start');
-  const endEl2 = document.getElementById('end');
-  function updateHints(){
-    if (dateHint && dateEl2) {
-      const iso = (dateEl2.type === 'date') ? dateEl2.value : parseDateILToISO(dateEl2.value);
-      dateHint.textContent = iso ? fmtDateIL(iso) : '';
-    }
-    if (startHint && startEl2) startHint.textContent = fmtTime24(startEl2.value);
-    if (endHint && endEl2) endHint.textContent = fmtTime24(endEl2.value);
-  }
-  ['input','change','blur'].forEach(ev => {
-    if (dateEl2) dateEl2.addEventListener(ev, updateHints);
-    if (startEl2) startEl2.addEventListener(ev, updateHints);
-    if (endEl2) endEl2.addEventListener(ev, updateHints);
-  });
-  updateHints();
-
-
-  form.addEventListener("submit", (e) => {
+  if(!form){ console.error('sendForm not found'); return; }
+  form.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    const client = document.getElementById('client').value.trim();
+    const phoneRaw = document.getElementById('phone').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const dateRaw = document.getElementById('date').value;
+    const startRaw = document.getElementById('start').value;
+    const endRaw = document.getElementById('end').value;
+    const notes = document.getElementById('notes').value.trim();
 
-    // Raw values (no percent-encoding; we encode once into Base64)
-    const client = document.getElementById("client").value.trim();
-    const phoneRaw = document.getElementById("phone").value.trim();
-    const title = document.getElementById("title").value.trim();
-    const dateEl = document.getElementById("date");
-    const startEl = document.getElementById("start");
-    const endEl = document.getElementById("end");
-    const dateRaw = dateEl.value;
-    const startRaw = startEl.value;
-    const endRaw = endEl.value;
-    const date = (dateEl && dateEl.type === 'date') ? dateRaw : parseDateILToISO(dateRaw);
-    const start = (startEl && startEl.type === 'time') ? startRaw : normalizeTime(startRaw);
-    const end = (endEl && endEl.type === 'time') ? endRaw : normalizeTime(endRaw);
-    const notes = document.getElementById("notes").value.trim();
-    if (!date || !start || !end || !phoneRaw) {
-      alert("Please enter a valid date, times, and phone.");
+    const date = parseDateILToISO(dateRaw);
+    const start = normalizeTime(startRaw);
+    const end = normalizeTime(endRaw);
+    if(!date || !start || !end || !phoneRaw){
+      alert('נא למלא תאריך, שעות וטלפון תקינים.');
       return;
     }
 
-    const locationRaw = document.querySelector('input[name="location"]:checked').value;
-    const [branchName, addressFull] = locationRaw.split("|").map((v) => v.trim());
-
+    const locVal = document.querySelector('input[name="location"]:checked').value;
+    const [branchName, addressFull] = locVal.split('|').map(v=>v.trim());
     const startFull = `${date}T${start}`;
     const endFull = `${date}T${end}`;
     const isHome = branchName === addressFull;
 
-    // Build full query URL (robust for shortening)
-    const qs = new URLSearchParams({
-      client,
-      title,
-      start: startFull,
-      end: endFull,
-      notes,
-      location: addressFull,
-      branch: branchName,
-      home: isHome ? '1' : '0'
-    }).toString();
+    const qs = new URLSearchParams({ client, title, start: startFull, end: endFull, notes, location: addressFull, branch: branchName, home: isHome?'1':'0' }).toString();
     const longUrl = `${BASE_URL}?${qs}`;
 
-    // Try ultra-short packed code (<= 12 chars hash) when possible
-    const DEFAULT_TITLE = "קביעת תור לעיסוי";
-    const radios = Array.from(document.querySelectorAll('input[name="location"]'));
-    const bIdx = Math.max(0, radios.findIndex(r => r.checked));
-    const baseMs = Date.parse("2025-01-01T00:00:00.000Z");
-    const startMs = new Date(startFull).getTime();
-    const endMs = new Date(endFull).getTime();
-    const durMin = Math.round((endMs - startMs) / 60000);
-    const startMin = Math.floor((startMs - baseMs) / 60000);
+    // Compact hash payload (stable, no non-ASCII issues)
+    const payload = { c: client, t: title, s: startFull, e: endFull, n: notes, l: addressFull, b: branchName, h: isHome?1:0 };
+    const shortUrl = `${BASE_URL}#${b64url(JSON.stringify(payload))}`;
 
-    let shortUrl;
-    const canUltraShort = false;
-    if (canUltraShort) {
-      // Pack bits: v(3)=1, b(2), start(23), dur(7), pad(5) -> 40 bits -> 7 base64url chars
-      let x = 0n;
-      x = (x << 3n) | 1n;                 // version
-      x = (x << 2n) | BigInt(bIdx & 0x3); // branch idx
-      x = (x << 23n) | BigInt(startMin);  // start minutes since 2025-01-01Z
-      x = (x << 7n) | BigInt(durMin);     // duration minutes
-      x = (x << 5n);                      // pad
-      const bytes = new Uint8Array(5);
-      for (let i = 4; i >= 0; i--) { bytes[i] = Number(x & 0xffn); x >>= 8n; }
-      const code = b64UrlFromBytes(bytes); // typically 7 chars
-      shortUrl = `${BASE_URL}#!${code}`;
-    } else {
-      // Fallback: compact JSON in hash (include home flag)
-      const payload = { c: client, t: title, s: startFull, e: endFull, n: notes, l: addressFull, b: branchName, h: isHome ? 1 : 0 };
-      shortUrl = `${BASE_URL}#${b64UrlEncode(JSON.stringify(payload))}`;
-    }
+    // Normalize phone to international (IL +972)
+    let phone = phoneRaw.replace(/\D/g,''); if(phone.startsWith('0')) phone = '972'+phone.slice(1);
 
-    // Normalize phone to international (Israel 972)
-    let phone = phoneRaw.replace(/\D/g, "");
-    if (phone.startsWith("0")) phone = "972" + phone.substring(1);
-
-    // Preview + WhatsApp send button
-    preview.style.display = "block";
+    preview.style.display = 'block';
     preview.innerHTML = `
       <p><strong>קישור לתור:</strong></p>
-      <a id="apptLink" href="${shortUrl}" target="_blank">${shortUrl}</a><br><br>
+      <a id="apptLink" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a><br><br>
       <button id="btnSendWA" class="btn-whatsapp" type="button">שליחה ב‑WhatsApp</button>
     `;
 
-    const waBtn = document.getElementById("btnSendWA");
-    waBtn.addEventListener("click", async () => {
-      waBtn.disabled = true;
-      // Use the full query URL for shortening, so details survive even if hash is dropped
-      let finalUrl = longUrl;
-      try {
-        finalUrl = await shortenWithTiny(longUrl);
-      } catch (e) {
-        console.warn('TinyURL unavailable, sending original URL', e);
-      }
-      const msg = `Shalom ${client}, here is your appointment link:\n${finalUrl}`;
+    const btn = document.getElementById('btnSendWA');
+    btn.addEventListener('click', async ()=>{
+      btn.disabled = true;
+      const finalUrl = await shortenWithTiny(longUrl);
+      const msg = `שלום ${client}, הנה הקישור לקביעת התור שלך:\n${finalUrl}`;
       const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-      window.open(waLink, "_blank");
-      waBtn.disabled = false;
+      window.open(waLink, '_blank');
+      btn.disabled = false;
     });
+  });
+
+  // Footer year
+  const yearEl = document.getElementById('year');
+  if(yearEl) yearEl.textContent = new Date().getFullYear();
+});
+
