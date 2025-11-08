@@ -1,3 +1,14 @@
+// פונקציה לקיצור קישור באמצעות TinyURL
+async function shortenUrl(longUrl) {
+  const apiUrl = "https://tinyurl.com/api-create.php?url=" + encodeURIComponent(longUrl);
+  const res = await fetch(apiUrl);
+  if (!res.ok) {
+    throw new Error("URL shortener failed");
+  }
+  const shortUrl = await res.text();
+  return shortUrl.trim();
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   const form = document.getElementById("sendForm");
   const preview = document.getElementById("preview");
@@ -61,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   console.log("✅ sender.js נטען בהצלחה והאירוע הופעל");
 });
+
 
 
 
