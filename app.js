@@ -125,9 +125,12 @@ document.addEventListener("DOMContentLoaded", function () {
   function toggleHomeVisuals(isHomeVisit) {
     try {
       const clinic = document.querySelector('.clinic-photo');
-      const homeFig = document.getElementById('homeIllustration');
+      const homeFigOld = document.getElementById('homeIllustration');
+      const homeFigNew = document.getElementById('homeIllustration2');
       if (clinic) clinic.style.display = isHomeVisit ? 'none' : '';
-      if (homeFig) homeFig.style.display = isHomeVisit ? '' : 'none';
+      // Always prefer the new illustration if present
+      if (homeFigOld) homeFigOld.style.display = 'none';
+      if (homeFigNew) homeFigNew.style.display = isHomeVisit ? '' : 'none';
     } catch (_) { /* noop */ }
   }
 
