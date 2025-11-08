@@ -31,6 +31,70 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  // ---- Input masks and parsing for Israeli formats ----
+  function normalizeTime(val) {
+    if (!val) return null;
+    const m = String(val).trim().match(/^([0-2]?\d)[:.]?([0-5]?\d)?$/);
+    if (!m) return null;
+    let hh = parseInt(m[1], 10);
+    let mm = m[2] != null ? parseInt(m[2], 10) : 0;
+    if (isNaN(hh) || isNaN(mm) || hh > 23 || mm > 59) return null;
+    return String(hh).padStart(2, '0') + ":" + String(mm).padStart(2, '0');
+  }
+
+  function setupTimeMask(el) {
+    if (!el) return;
+    el.addEventListener('input', () => {
+      let digits = el.value.replace(/\D/g, '').slice(0, 4);
+      if (digits.length >= 3) {
+        el.value = digits.slice(0, 2) + ':' + digits.slice(2);
+      } else {
+        el.value = digits;
+      }
+    });
+    const fix = () => {
+      const n = normalizeTime(el.value);
+      if (n) el.value = n;
+    };
+    el.addEventListener('blur', fix);
+    el.addEventListener('change', fix);
+  }
+
+  function parseDateILToISO(val) {
+    if (!val) return null;
+    const m = String(val).trim().match(/^\s*(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})\s*$/);
+    if (!m) return null;
+    let d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = parseInt(m[3], 10);
+    if (isNaN(d) || isNaN(mo) || isNaN(y) || y < 1900 || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    const daysInMonth = [31, (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (d > daysInMonth[mo - 1]) return null;
+    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+
+  function setupDateMask(el) {
+    if (!el) return;
+    el.addEventListener('input', () => {
+      let digits = el.value.replace(/\D/g, '').slice(0, 8);
+      let out = '';
+      if (digits.length <= 2) out = digits;
+      else if (digits.length <= 4) out = digits.slice(0, 2) + '/' + digits.slice(2);
+      else out = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+      el.value = out;
+    });
+    el.addEventListener('blur', () => {
+      const iso = parseDateILToISO(el.value);
+      if (iso) {
+        const [y, m, d] = iso.split('-');
+        el.value = `${d}/${m}/${y}`;
+      }
+    });
+  }
+
+  // Attach masks to inputs (enforce 24h HH:MM and DD/MM/YYYY)
+  setupDateMask(document.getElementById('date'));
+  setupTimeMask(document.getElementById('start'));
+  setupTimeMask(document.getElementById('end'));
+
   // Static options now defined in sender.html; no injection needed.
   // Rename the last radio option label/value to "בית המטופל/ת" to match new phrasing
   try {
@@ -55,9 +119,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const client = document.getElementById("client").value.trim();
     const phoneRaw = document.getElementById("phone").value.trim();
     const title = document.getElementById("title").value.trim();
-    const date = document.getElementById("date").value;
-    const start = document.getElementById("start").value;
-    const end = document.getElementById("end").value;
+    const dateRaw = document.getElementById("date").value;
+    const startRaw = document.getElementById("start").value;
+    const endRaw = document.getElementById("end").value;
+    const date = parseDateILToISO(dateRaw);
+    const start = normalizeTime(startRaw);
+    const end = normalizeTime(endRaw);
     const notes = document.getElementById("notes").value.trim();
 
     if (!date || !start || !end || !phoneRaw) {
