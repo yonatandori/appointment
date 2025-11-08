@@ -3,6 +3,52 @@ document.addEventListener('DOMContentLoaded', () => {
   const preview = document.getElementById('preview');
   const BASE_URL = 'https://yonatandori.github.io/appointment/';
 
+  // Hebrew UI text (ASCII-safe via Unicode escapes)
+  const i18n = {
+    title: "\u05DE\u05D7\u05D5\u05DC\u05DC \u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05D5\u05E8 | \u05D9\u05D5\u05E0\u05EA\u05DF \u05D3\u05D5\u05E8\u05D9 \u05E2\u05D9\u05E1\u05D5\u05D9",
+    h1: "\u05DE\u05D7\u05D5\u05DC\u05DC \u05E7\u05D9\u05E9\u05D5\u05E8 \u05EA\u05D5\u05E8",
+    client_label: "\u05E9\u05DD \u05D4\u05DC\u05E7\u05D5\u05D7:",
+    phone_label: "\u05D8\u05DC\u05E4\u05D5\u05DF \u05D4\u05DC\u05E7\u05D5\u05D7 (05...):",
+    title_label: "\u05DB\u05D5\u05EA\u05E8\u05EA \u05D4\u05D8\u05D9\u05E4\u05D5\u05DC:",
+    date_label: "\u05EA\u05D0\u05E8\u05D9\u05DA:", start_label: "\u05E9\u05E2\u05EA \u05D4\u05EA\u05D7\u05DC\u05D4:", end_label: "\u05E9\u05E2\u05EA \u05E1\u05D9\u05D5\u05DD:",
+    location_label: "\u05DE\u05D9\u05E7\u05D5\u05DD \u05D4\u05D8\u05D9\u05E4\u05D5\u05DC:",
+    notes_label: "\u05D4\u05E2\u05E8\u05D5\u05EA:",
+    submit_btn: "\u05D9\u05E6\u05D9\u05E8\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8",
+    phone_ph: "\u05DC\u05DE\u05E9\u05DC 0546257272",
+    title_value: "\u05E7\u05D1\u05E2\u05EA \u05EA\u05D5\u05E8 \u05DC\u05E2\u05D9\u05E1\u05D5\u05D9",
+    date_ph: "DD/MM/YYYY", time_ph: "HH:MM",
+    loc_tlv_label: "\u05E7\u05DC\u05D9\u05E0\u05D9\u05E7\u05D4 \u05EA\u05DC \u05D0\u05D1\u05D9\u05D1 \u2014 \u05E8\u05D7\u05D5\u05D1 \u05E8\u05D0\u05E9\u05D9 6",
+    loc_tlv_val: "\u05E7\u05DC\u05D9\u05E0\u05D9\u05E7\u05D4 \u05EA\u05DC \u05D0\u05D1\u05D9\u05D1|\u05E8\u05D7\u05D5\u05D1 \u05E8\u05D0\u05E9\u05D9 6, \u05EA\u05DC \u05D0\u05D1\u05D9\u05D1",
+    loc_rg_label: "\u05E7\u05DC\u05D9\u05E0\u05D9\u05E7\u05D4 \u05E8\u05DE\u05EA \u05D2\u05DF \u2014 \u05E8\u05D7\u05D5\u05D1 \u05DE\u05E8\u05DB\u05D6\u05D9 32 (\u05E7\u05D5\u05DE\u05D4 1)",
+    loc_rg_val: "\u05E7\u05DC\u05D9\u05E0\u05D9\u05E7\u05D4 \u05E8\u05DE\u05EA \u05D2\u05DF|\u05E8\u05D7\u05D5\u05D1 \u05DE\u05E8\u05DB\u05D6\u05D9 32 (\u05E7\u05D5\u05DE\u05D4 1), \u05E8\u05DE\u05EA \u05D2\u05DF",
+    loc_home_label: "\u05D1\u05D9\u05E7\u05D5\u05E8 \u05D1\u05D9\u05EA",
+    loc_home_val: "\u05D1\u05D9\u05E7\u05D5\u05E8 \u05D1\u05D9\u05EA|\u05D1\u05D9\u05E7\u05D5\u05E8 \u05D1\u05D9\u05EA",
+    picker_date_title: "\u05D1\u05D7\u05E8 \u05EA\u05D0\u05E8\u05D9\u05DA (\u05D9\u05D5\u05DD/\u05D7\u05D5\u05D3\u05E9/\u05E9\u05E0\u05D4)",
+    picker_time_title: "\u05D1\u05D7\u05E8 \u05E9\u05E2\u05D4 (24 \u05E9\u05E2\u05D5\u05EA)",
+    btn_cancel: "\u05D1\u05D8\u05DC", btn_ok: "\u05D1\u05D7\u05E8",
+    error_fill: "\u05E0\u05D0 \u05DC\u05DE\u05DC\u05D0 \u05EA\u05D0\u05E8\u05D9\u05DA, \u05E9\u05E2\u05D5\u05EA \u05D5\u05D8\u05DC\u05E4\u05D5\u05DF \u05EA\u05E7\u05D9\u05E0\u05D9\u05DD.",
+    preview_title: "\u05E7\u05D9\u05E9\u05D5\u05E8 \u05DC\u05EA\u05D5\u05E8:",
+    wa_button: "\u05E9\u05DC\u05D9\u05D7\u05D4 \u05D1\u200E-WhatsApp",
+    wa_msg_prefix: "\u05E9\u05DC\u05D5\u05DD ",
+    wa_msg_suffix: ", \u05D4\u05E0\u05D4 \u05D4\u05E7\u05D9\u05E9\u05D5\u05E8 \u05DC\u05E7\u05D1\u05E2\u05EA \u05D4\u05EA\u05D5\u05E8 \u05E9\u05DC\u05DA:\n",
+    footer: "\u00A9 {year} \u05D9\u05D5\u05E0\u05EA\u05DF \u05D3\u05D5\u05E8\u05D9 \u2014 \u05DB\u05DC \u05D4\u05D6\u05DB\u05D5\u05D9\u05D5\u05EA \u05E9\u05DE\u05D5\u05E8\u05D5\u05EA"
+  };
+
+  // Apply i18n
+  document.title = i18n.title;
+  const t = (key) => i18n[key] || '';
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  const phone = document.getElementById('phone'); if (phone) phone.placeholder = i18n.phone_ph;
+  const titleInput = document.getElementById('title'); if (titleInput) titleInput.value = i18n.title_value;
+  const dateInputEl = document.getElementById('date'); if (dateInputEl) dateInputEl.placeholder = i18n.date_ph;
+  const startInputEl = document.getElementById('start'); if (startInputEl) startInputEl.placeholder = i18n.time_ph;
+  const endInputEl = document.getElementById('end'); if (endInputEl) endInputEl.placeholder = i18n.time_ph;
+  const loc1 = document.getElementById('loc1'); if (loc1) loc1.value = i18n.loc_tlv_val;
+  const loc2 = document.getElementById('loc2'); if (loc2) loc2.value = i18n.loc_rg_val;
+  const loc3 = document.getElementById('loc3'); if (loc3) loc3.value = i18n.loc_home_val;
+  if (loc1) loc1.checked = true;
+  const footerText = document.getElementById('footerText'); if (footerText) footerText.textContent = i18n.footer.replace('{year}','');
+
   // --- Helpers ---
   const b64url = (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'');
   const pad2 = (n) => String(n).padStart(2,'0');
@@ -113,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const start = normalizeTime(startRaw);
     const end = normalizeTime(endRaw);
     if(!date || !start || !end || !phoneRaw){
-      alert('נא למלא תאריך, שעות וטלפון תקינים.');
+      alert(i18n.error_fill);
       return;
     }
 
@@ -135,16 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     preview.style.display = 'block';
     preview.innerHTML = `
-      <p><strong>קישור לתור:</strong></p>
+      <p><strong>${i18n.preview_title}</strong></p>
       <a id="apptLink" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a><br><br>
-      <button id="btnSendWA" class="btn-whatsapp" type="button">שליחה ב‑WhatsApp</button>
+      <button id="btnSendWA" class="btn-whatsapp" type="button">${i18n.wa_button}</button>
     `;
 
     const btn = document.getElementById('btnSendWA');
     btn.addEventListener('click', async ()=>{
       btn.disabled = true;
       const finalUrl = await shortenWithTiny(longUrl);
-      const msg = `שלום ${client}, הנה הקישור לקביעת התור שלך:\n${finalUrl}`;
+      const msg = `${i18n.wa_msg_prefix}${client}${i18n.wa_msg_suffix}${finalUrl}`;
       const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(waLink, '_blank');
       btn.disabled = false;
@@ -155,4 +201,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = document.getElementById('year');
   if(yearEl) yearEl.textContent = new Date().getFullYear();
 });
-
