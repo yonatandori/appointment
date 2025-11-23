@@ -195,7 +195,9 @@
   const dateText = document.getElementById("dateText").textContent;
   const timeText = document.getElementById("timeText").textContent;
 
-  const senderName = client || "מטופל/ת";
+  const clientNameEl = document.getElementById("clientName");
+  const clientNameText = clientNameEl ? clientNameEl.textContent.trim() : "";
+  const senderName = (clientNameText && clientNameText !== '—') ? clientNameText : (client || "מטופל/ת");
   const msgConfirm = `שלום, כאן ${senderName}. מאשר/ת הגעה לתור "${title}" בתאריך ${dateText} בשעות ${timeText}.`;
   const msgCancel = `שלום, כאן ${senderName}. מבקש/ת לבטל את התור בתאריך ${dateText} בשעות ${timeText}.`;
   document.getElementById("btnConfirm").href = waBase + encodeURIComponent(msgConfirm);
