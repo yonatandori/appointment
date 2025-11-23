@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
   const apptEl = document.getElementById("appt");
 
   // URL-safe Base64 helpers (UTF-8 aware)
@@ -32,11 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let locationText = "";
   let branch = "";
   let isHomeFlag = false;
-  const DEFAULT_TITLE = "עיסוי רפואי – טיפול מלא";
+  const DEFAULT_TITLE = "׳¢׳™׳¡׳•׳™ ׳¨׳₪׳•׳׳™ ג€“ ׳˜׳™׳₪׳•׳ ׳׳׳";
   const BRANCHES = [
-    { branch: "תל אביב", location: "רח׳ הפרג 6, פרדסיה" },
-    { branch: "פרדסיה", location: "רח׳ הפרג 6, פרדסיה" },
-    { branch: "בית הלקוח", location: "בית הלקוח" }
+    { branch: "׳×׳ ׳׳‘׳™׳‘", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
+    { branch: "׳₪׳¨׳“׳¡׳™׳”", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
+    { branch: "׳‘׳™׳× ׳”׳׳§׳•׳—", location: "׳‘׳™׳× ׳”׳׳§׳•׳—" }
   ];
 
   const hash = window.location.hash || "";
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
   apptEl.dataset.notes = notes;
 
   // Display fields
-  const displayLocation = branch ? `${branch} – ${locationText}` : locationText;
+  const displayLocation = branch ? `${branch} ג€“ ${locationText}` : locationText;
   document.getElementById("clientName").textContent = client;
   document.getElementById("dateText").textContent = start ? new Date(start).toLocaleDateString("he-IL") : "";
   document.getElementById("timeText").textContent = (start && end)
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
   (function(){
     try {
       if (branch && locationText && branch === locationText) {
-        branch = 'בית המטופל/ת';
+        branch = '׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×';
         locationText = branch;
         document.getElementById("placeText").textContent = branch;
         const mapLinks = document.querySelector('.map-links');
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
   })();
 
   // Hide navigation/maps if home-visit
-  const isHome = (branch === 'בית הלקוח') || (locationText === 'בית הלקוח');
+  const isHome = (branch === '׳‘׳™׳× ׳”׳׳§׳•׳—') || (locationText === '׳‘׳™׳× ׳”׳׳§׳•׳—');
   if (isHome) {
     const mapLinks = document.querySelector('.map-links');
     if (mapLinks) mapLinks.style.display = 'none';
@@ -172,14 +172,14 @@ document.addEventListener("DOMContentLoaded", function () {
       if (mapLinks) mapLinks.style.display = 'none';
       arrivalInfo.style.display = '';
       arrivalInfo.innerHTML = `
-        <h3>טיפול בבית המטופל/ת</h3>
+        <h3>׳˜׳™׳₪׳•׳ ׳‘׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×</h3>
         <p>
-          לתשומת לבך: למחיר הטיפול תתווסף תוספת בהתאם למרחק הנסיעה,
-          לקומה ולמעלית/ללא מעלית, כפי שסוכם מראש.
+          ׳׳×׳©׳•׳׳× ׳׳‘׳: ׳׳׳—׳™׳¨ ׳”׳˜׳™׳₪׳•׳ ׳×׳×׳•׳•׳¡׳£ ׳×׳•׳¡׳₪׳× ׳‘׳”׳×׳׳ ׳׳׳¨׳—׳§ ׳”׳ ׳¡׳™׳¢׳”,
+          ׳׳§׳•׳׳” ׳•׳׳׳¢׳׳™׳×/׳׳׳ ׳׳¢׳׳™׳×, ׳›׳₪׳™ ׳©׳¡׳•׳›׳ ׳׳¨׳׳©.
         </p>
       `;
       // Ensure the place text shows the correct label
-      document.getElementById("placeText").textContent = 'בית המטופל/ת';
+      document.getElementById("placeText").textContent = '׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×';
     }
   } catch (_) {}
 
@@ -195,8 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const dateText = document.getElementById("dateText").textContent;
   const timeText = document.getElementById("timeText").textContent;
 
-  const msgConfirm = `שלום, כאן יונתן. מאשר/ת הגעה לתור "${title}" בתאריך ${dateText} בשעות ${timeText}.`;
-  const msgCancel = `שלום, כאן יונתן. מבקש/ת לבטל את התור בתאריך ${dateText} בשעות ${timeText}.`;
+  const senderName = client || "מטופל/ת";
+  const msgConfirm = `שלום, כאן ${senderName}. מאשר/ת הגעה לתור "${title}" בתאריך ${dateText} בשעות ${timeText}.`;
+  const msgCancel = `שלום, כאן ${senderName}. מבקש/ת לבטל את התור בתאריך ${dateText} בשעות ${timeText}.`;
   document.getElementById("btnConfirm").href = waBase + encodeURIComponent(msgConfirm);
   document.getElementById("btnCancel").href = waBase + encodeURIComponent(msgCancel);
 
@@ -208,3 +209,4 @@ document.addEventListener("DOMContentLoaded", function () {
   btnAdd.href = gcalUrl;
   btnAdd.target = "_blank";
 });
+
