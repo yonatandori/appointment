@@ -32,13 +32,13 @@
   let locationText = "";
   let branch = "";
   let isHomeFlag = false;
-  const TEL_AVIV_BRANCH = "קליניקה תל אביב";
-  const TEL_AVIV_ADDRESS = "רחוב הזוהר 32, תל אביב";
+  const TEL_AVIV_BRANCH = "\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05d1\u05d1\u05dc\u05d9";
+  const TEL_AVIV_ADDRESS = "\u05e8\u05d7\u05d5\u05d1 \u05d4\u05d6\u05d5\u05d4\u05e8 32, \u05ea\u05dc \u05d0\u05d1\u05d9\u05d1";
   
   const BRANCHES = [
-    { branch: "׳×׳ ׳׳‘׳™׳‘", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
-    { branch: "׳₪׳¨׳“׳¡׳™׳”", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
-    { branch: "׳‘׳™׳× ׳”׳׳§׳•׳—", location: "׳‘׳™׳× ׳”׳׳§׳•׳—" }
+    { branch: TEL_AVIV_BRANCH, location: TEL_AVIV_ADDRESS },
+    { branch: "\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05e8\u05de\u05ea \u05d2\u05df", location: "\u05e8\u05d7\u05d5\u05d1 \u05de\u05e8\u05db\u05d6\u05d9 32 (\u05e7\u05d5\u05de\u05d4 1), \u05e8\u05de\u05ea \u05d2\u05df" },
+    { branch: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea", location: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea" }
   ];
 
   const hash = window.location.hash || "";
@@ -115,7 +115,12 @@
   apptEl.dataset.notes = notes;
 
   // Display fields
-  const displayLocation = branch ? `${branch} ג€“ ${locationText}` : locationText;
+  let displayLocation = locationText;
+  if (branch) {
+    displayLocation = branch === TEL_AVIV_BRANCH
+      ? `${branch}: ${locationText}`
+      : `${branch} — ${locationText}`;
+  }
   document.getElementById("clientName").textContent = client;
   document.getElementById("dateText").textContent = start ? new Date(start).toLocaleDateString("he-IL") : "";
   document.getElementById("timeText").textContent = (start && end)
