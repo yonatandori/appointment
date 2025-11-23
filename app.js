@@ -32,7 +32,9 @@
   let locationText = "";
   let branch = "";
   let isHomeFlag = false;
-  const DEFAULT_TITLE = "׳¢׳™׳¡׳•׳™ ׳¨׳₪׳•׳׳™ ג€“ ׳˜׳™׳₪׳•׳ ׳׳׳";
+  const TEL_AVIV_BRANCH = "קליניקה תל אביב";
+  const TEL_AVIV_ADDRESS = "רחוב הזוהר 32, תל אביב";
+  
   const BRANCHES = [
     { branch: "׳×׳ ׳׳‘׳™׳‘", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
     { branch: "׳₪׳¨׳“׳¡׳™׳”", location: "׳¨׳—׳³ ׳”׳₪׳¨׳’ 6, ׳₪׳¨׳“׳¡׳™׳”" },
@@ -96,6 +98,9 @@
     if (homeQ === '1') isHomeFlag = true;
   }
 
+  if (branch && branch === TEL_AVIV_BRANCH) {
+    locationText = TEL_AVIV_ADDRESS;
+  }
   // Build map links
   const encodedAddress = encodeURIComponent(locationText || "");
   const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
