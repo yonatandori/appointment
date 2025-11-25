@@ -332,8 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <line x1="90" y1="98" x2="82" y2="94" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
               <line x1="118" y1="98" x2="154" y2="90" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
             </svg>
-            <figcaption>\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea \u05d7\u05d3\u05e9</figcaption>
-          </figure>
+            </figure>
         `;
       }
     } catch (_) { /* no-op */ }
