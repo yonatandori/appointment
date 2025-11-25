@@ -1,5 +1,6 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   const apptEl = document.getElementById("appt");
+  if (!apptEl) return;
 
   // URL-safe Base64 helpers (UTF-8 aware)
   function b64UrlEncode(str) {
@@ -16,14 +17,15 @@
   }
   function b64UrlToBytes(str) {
     let s = str.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = s.length % 4; if (pad) s += "=".repeat(4 - pad);
+    const pad = s.length % 4;
+    if (pad) s += "=".repeat(4 - pad);
     const bin = atob(s);
     const out = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
     return out;
   }
 
-  // Prefer compact hash payload; fallback to query params
+  // Data holders
   let client = "";
   let title = "";
   let start = "";
@@ -32,13 +34,19 @@
   let locationText = "";
   let branch = "";
   let isHomeFlag = false;
+
+  // Static labels/addresses
+  const DEFAULT_TITLE = "\u05e7\u05d1\u05e2\u05ea \u05ea\u05d5\u05e8 \u05dc\u05e2\u05d9\u05e1\u05d5\u05d9";
   const TEL_AVIV_BRANCH = "\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05d1\u05d1\u05dc\u05d9";
   const TEL_AVIV_ADDRESS = "\u05e8\u05d7\u05d5\u05d1 \u05d4\u05d6\u05d5\u05d4\u05e8 32, \u05ea\u05dc \u05d0\u05d1\u05d9\u05d1";
-  
+  const MAIN_BRANCH = "\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05e8\u05d0\u05e9\u05d9\u05ea";
+  const MAIN_ADDRESS = "\u05e8\u05d7' \u05e4\u05e8\u05d2 6, \u05e4\u05e8\u05d3\u05e1\u05d9\u05d4";
+  const HOME_LABEL = "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea";
+
   const BRANCHES = [
     { branch: TEL_AVIV_BRANCH, location: TEL_AVIV_ADDRESS },
-    { branch: "\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05e8\u05de\u05ea \u05d2\u05df", location: "\u05e8\u05d7\u05d5\u05d1 \u05de\u05e8\u05db\u05d6\u05d9 32 (\u05e7\u05d5\u05de\u05d4 1), \u05e8\u05de\u05ea \u05d2\u05df" },
-    { branch: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea", location: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea" }
+    { branch: MAIN_BRANCH, location: MAIN_ADDRESS },
+    { branch: HOME_LABEL, location: HOME_LABEL }
   ];
 
   const hash = window.location.hash || "";
@@ -95,18 +103,30 @@
     locationText = params.get("location") || "";
     branch = params.get("branch") || "";
     const homeQ = params.get("home");
-    if (homeQ === '1') isHomeFlag = true;
+    if (homeQ === "1") isHomeFlag = true;
   }
 
+  // Normalize known branches
   if (branch && branch === TEL_AVIV_BRANCH) {
     locationText = TEL_AVIV_ADDRESS;
+  } else if (branch && branch === MAIN_BRANCH) {
+    locationText = MAIN_ADDRESS;
   }
+
+  // Determine if this is a home visit
+  const isHomeByEquality = branch && locationText && branch === locationText;
+  const isHome = Boolean(isHomeFlag) || isHomeByEquality || branch === HOME_LABEL || locationText === HOME_LABEL;
+  if (isHome) {
+    branch = HOME_LABEL;
+    locationText = HOME_LABEL;
+  }
+
   // Build map links
   const encodedAddress = encodeURIComponent(locationText || "");
   const gmapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
   const wazeLink = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
 
-  // Store data attributes
+  // Store data attributes for other scripts/CSS hooks
   apptEl.dataset.clientName = client;
   apptEl.dataset.title = title;
   apptEl.dataset.startLocal = start;
@@ -115,11 +135,11 @@
   apptEl.dataset.notes = notes;
 
   // Display fields
-  let displayLocation = locationText;
-  if (branch) {
+  let displayLocation = isHome ? HOME_LABEL : locationText;
+  if (!isHome && branch) {
     displayLocation = branch === TEL_AVIV_BRANCH
       ? `${branch}: ${locationText}`
-      : `${branch} — ${locationText}`;
+      : `${branch} - ${locationText}`;
   }
   document.getElementById("clientName").textContent = client;
   document.getElementById("dateText").textContent = start ? new Date(start).toLocaleDateString("he-IL") : "";
@@ -134,70 +154,37 @@
   // Toggle clinic photo vs. home-visit illustration
   function toggleHomeVisuals(isHomeVisit) {
     try {
-      const clinic = document.querySelector('.clinic-photo');
-      const homeFigOld = document.getElementById('homeIllustration');
-      const homeFigNew = document.getElementById('homeIllustration2');
-      if (clinic) clinic.style.display = isHomeVisit ? 'none' : '';
+      const clinic = document.querySelector(".clinic-photo");
+      const homeFigOld = document.getElementById("homeIllustration");
+      const homeFigNew = document.getElementById("homeIllustration2");
+      if (clinic) clinic.style.display = isHomeVisit ? "none" : "";
       // Always prefer the new illustration if present
-      if (homeFigOld) homeFigOld.style.display = 'none';
-      if (homeFigNew) homeFigNew.style.display = isHomeVisit ? '' : 'none';
+      if (homeFigOld) homeFigOld.style.display = "none";
+      if (homeFigNew) homeFigNew.style.display = isHomeVisit ? "" : "none";
     } catch (_) { /* noop */ }
   }
 
-  // Normalize and handle home-visit (branch equals location)
-  (function(){
+  function showHomeVisitLayout() {
     try {
-      if (branch && locationText && branch === locationText) {
-        branch = '׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×';
-        locationText = branch;
-        document.getElementById("placeText").textContent = branch;
-        const mapLinks = document.querySelector('.map-links');
-        if (mapLinks) mapLinks.style.display = 'none';
-        const arrivalInfo = document.getElementById('arrivalInfo');
-        if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
-        toggleHomeVisuals(true);
+      const mapLinks = document.querySelector(".map-links");
+      if (mapLinks) mapLinks.style.display = "none";
+      const arrivalInfo = document.getElementById("arrivalInfo");
+      if (arrivalInfo) {
+        arrivalInfo.style.display = "";
+        arrivalInfo.innerHTML = `
+          <h3>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea</h3>
+          <p>\u05d9\u05d5\u05e0\u05ea\u05df \u05de\u05d2\u05d9\u05e2/\u05d4 \u05d0\u05dc\u05d9\u05da \u05e2\u05dd \u05de\u05d9\u05d8\u05d4. \u05e0\u05d0 \u05dc\u05d4\u05db\u05d9\u05df \u05de\u05e7\u05d5\u05dd \u05e4\u05e0\u05d5\u05d9, \u05e0\u05e7\u05d5\u05d3\u05ea \u05d7\u05e9\u05de\u05dc \u05d5\u05de\u05d2\u05d1\u05ea/\u05e1\u05d3\u05d9\u05df.</p>
+        `;
       }
-    } catch (_) {}
-  })();
-
-  // Hide navigation/maps if home-visit
-  const isHome = (branch === '׳‘׳™׳× ׳”׳׳§׳•׳—') || (locationText === '׳‘׳™׳× ׳”׳׳§׳•׳—');
-  if (isHome) {
-    const mapLinks = document.querySelector('.map-links');
-    if (mapLinks) mapLinks.style.display = 'none';
-    const arrivalInfo = document.getElementById('arrivalInfo');
-    if (arrivalInfo) { arrivalInfo.style.display = 'none'; arrivalInfo.innerHTML = ''; }
-    toggleHomeVisuals(true);
+      const placeEl = document.getElementById("placeText");
+      if (placeEl) placeEl.textContent = HOME_LABEL;
+      toggleHomeVisuals(true);
+    } catch (_) { /* no-op */ }
   }
 
-  // Arrival info panel (kept minimal; content depends on branch labels)
-  const arrivalInfo = document.getElementById("arrivalInfo");
-  arrivalInfo.innerHTML = arrivalInfo.innerHTML || ""; // no-op placeholder to keep existing HTML if present
-
-  // If home-visit was selected, show surcharge info instead of directions
-  try {
-    const isHomeByEquality = branch && locationText && branch === locationText;
-    if ((isHomeFlag || isHomeByEquality) && arrivalInfo) {
-      const mapLinks = document.querySelector('.map-links');
-      if (mapLinks) mapLinks.style.display = 'none';
-      arrivalInfo.style.display = '';
-      arrivalInfo.innerHTML = `
-        <h3>׳˜׳™׳₪׳•׳ ׳‘׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×</h3>
-        <p>
-          ׳׳×׳©׳•׳׳× ׳׳‘׳: ׳׳׳—׳™׳¨ ׳”׳˜׳™׳₪׳•׳ ׳×׳×׳•׳•׳¡׳£ ׳×׳•׳¡׳₪׳× ׳‘׳”׳×׳׳ ׳׳׳¨׳—׳§ ׳”׳ ׳¡׳™׳¢׳”,
-          ׳׳§׳•׳׳” ׳•׳׳׳¢׳׳™׳×/׳׳׳ ׳׳¢׳׳™׳×, ׳›׳₪׳™ ׳©׳¡׳•׳›׳ ׳׳¨׳׳©.
-        </p>
-      `;
-      // Ensure the place text shows the correct label
-      document.getElementById("placeText").textContent = '׳‘׳™׳× ׳”׳׳˜׳•׳₪׳/׳×';
-    }
-  } catch (_) {}
-
-  // Final safeguard: if it's a home visit, switch illustration
-  try {
-    const homeVisitFinal = Boolean(isHomeFlag) || (branch && locationText && branch === locationText) || Boolean(isHome);
-    if (homeVisitFinal) toggleHomeVisuals(true);
-  } catch (_) { /* noop */ }
+  if (isHome) {
+    showHomeVisitLayout();
+  }
 
   // Owner WhatsApp for confirm/cancel
   const OWNER_PHONE = "972546257272";
@@ -207,18 +194,21 @@
 
   const clientNameEl = document.getElementById("clientName");
   const clientNameText = clientNameEl ? clientNameEl.textContent.trim() : "";
-  const senderName = (clientNameText && clientNameText !== '—') ? clientNameText : (client || "מטופל/ת");
-  const msgConfirm = `שלום, כאן ${senderName}. מאשר/ת הגעה לתור "${title}" בתאריך ${dateText} בשעות ${timeText}.`;
-  const msgCancel = `שלום, כאן ${senderName}. מבקש/ת לבטל את התור בתאריך ${dateText} בשעות ${timeText}.`;
-  document.getElementById("btnConfirm").href = waBase + encodeURIComponent(msgConfirm);
-  document.getElementById("btnCancel").href = waBase + encodeURIComponent(msgCancel);
+  const senderName = (clientNameText && clientNameText !== "-") ? clientNameText : (client || "\u05de\u05d8\u05d5\u05e4\u05dc/\u05ea");
+  const msgConfirm = `\u05e9\u05dc\u05d5\u05dd, \u05db\u05d0\u05df ${senderName}. \u05d0\u05d9\u05e9\u05e8\u05ea\u05d9 \u05d0\u05ea \u05d4\u05ea\u05d5\u05e8 "\${title}" \u05d1\u05ea\u05d0\u05e8\u05d9\u05da ${dateText} \u05d1\u05e9\u05e2\u05d4 ${timeText}.`;
+  const msgCancel = `\u05e9\u05dc\u05d5\u05dd, \u05db\u05d0\u05df ${senderName}. \u05de\u05d1\u05d8\u05dc/\u05ea \u05d0\u05ea \u05d4\u05ea\u05d5\u05e8 \u05e9\u05e0\u05e7\u05d1\u05e2 \u05dc-${dateText} \u05d1\u05e9\u05e2\u05d4 ${timeText}.`;
+  const btnConfirm = document.getElementById("btnConfirm");
+  const btnCancel = document.getElementById("btnCancel");
+  if (btnConfirm) btnConfirm.href = waBase + encodeURIComponent(msgConfirm);
+  if (btnCancel) btnCancel.href = waBase + encodeURIComponent(msgCancel);
 
   // Google Calendar link (UTC format)
   const startUTC = start ? new Date(start).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : "";
   const endUTC = end ? new Date(end).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : "";
   const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startUTC}/${endUTC}&details=${encodeURIComponent(notes)}&location=${encodeURIComponent(locationText)}`;
   const btnAdd = document.getElementById("btnAddToCal");
-  btnAdd.href = gcalUrl;
-  btnAdd.target = "_blank";
+  if (btnAdd) {
+    btnAdd.href = gcalUrl;
+    btnAdd.target = "_blank";
+  }
 });
-
