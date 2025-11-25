@@ -304,6 +304,36 @@ document.addEventListener("DOMContentLoaded", function () {
         travelCard.innerHTML = `
           <h2>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea</h2>
           <p class="info-box" style="display:block">\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d7\u05d9\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d4\u05d1\u05d9\u05ea \u05d9\u05e7\u05d1\u05e2 \u05de\u05e8\u05d0\u05e9 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7, \u05d5\u05d2\u05d9\u05e9\u05d4 \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05d8\u05d5\u05e4\u05dc</p>
+          <figure class="home-illustration">
+            <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d8\u05e4\u05dc \u05de\u05d8\u05e4\u05e1 \u05e2\u05dd \u05de\u05d9\u05d8\u05d4 \u05d1\u05de\u05d3\u05e8\u05d2\u05d5\u05ea">
+              <defs>
+                <linearGradient id="homeRoof" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0ea5e9"/>
+                  <stop offset="100%" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+              <line x1="10" y1="122" x2="210" y2="122" stroke="#cbd5e1" stroke-width="3"/>
+              <polygon points="65,36 32,60 32,118 98,118 98,60" fill="url(#homeRoof)" stroke="#0ea5e9" stroke-width="2"/>
+              <rect x="40" y="60" width="50" height="58" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+              <rect x="58" y="88" width="14" height="32" fill="#bfdbfe" stroke="#60a5fa" stroke-width="2"/>
+              <rect x="76" y="72" width="10" height="10" fill="#bae6fd" stroke="#38bdf8" stroke-width="2"/>
+              <path d="M24 118 H72 V110 H90 V102 H110 V94 H128 V86 H146 V78 H166 V70 H188 V62 H208 V118 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+              <g transform="rotate(-18 118 90)">
+                <rect x="80" y="82" width="76" height="18" rx="4" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                <line x1="86" y1="92" x2="78" y2="98" stroke="#475569" stroke-width="2"/>
+                <line x1="150" y1="92" x2="158" y2="98" stroke="#475569" stroke-width="2"/>
+              </g>
+              <circle cx="104" cy="70" r="7" fill="#0f172a"/>
+              <line x1="104" y1="77" x2="104" y2="100" stroke="#0f172a" stroke-width="3"/>
+              <line x1="104" y1="88" x2="90" y2="98" stroke="#0f172a" stroke-width="3"/>
+              <line x1="104" y1="88" x2="118" y2="98" stroke="#0f172a" stroke-width="3"/>
+              <line x1="104" y1="100" x2="96" y2="118" stroke="#0f172a" stroke-width="3"/>
+              <line x1="104" y1="100" x2="116" y2="118" stroke="#0f172a" stroke-width="3"/>
+              <line x1="90" y1="98" x2="82" y2="94" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
+              <line x1="118" y1="98" x2="154" y2="90" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
+            </svg>
+            <figcaption>\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea \u05d7\u05d3\u05e9</figcaption>
+          </figure>
         `;
       }
     } catch (_) { /* no-op */ }
