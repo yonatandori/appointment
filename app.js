@@ -49,6 +49,135 @@ document.addEventListener("DOMContentLoaded", function () {
     { branch: HOME_LABEL, location: HOME_LABEL }
   ];
 
+  // Hebrew UI text (ASCII-safe)
+  const uiText = {
+    title: "\u05d0\u05d9\u05e9\u05d5\u05e8 \u05ea\u05d5\u05e8 \u007c \u05d9\u05d5\u05e0\u05ea\u05df \u05d3\u05d5\u05e8\u05d9 \u05e2\u05d9\u05e1\u05d5\u05d9",
+    header: "\u05d0\u05d9\u05e9\u05d5\u05e8 \u05ea\u05d5\u05e8",
+    subtitle: "\u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9 \u05d1\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 (\u05ea\u05dc \u05d0\u05d1\u05d9\u05d1/\u05e4\u05e8\u05d3\u05e1\u05d9\u05d4) \u05d0\u05d5 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea",
+    apptTitle: "\u05e4\u05e8\u05d8\u05d9 \u05d4\u05ea\u05d5\u05e8",
+    fieldClient: "\u05e9\u05dd \u05de\u05d8\u05d5\u05e4\u05dc/\u05ea",
+    fieldDate: "\u05ea\u05d0\u05e8\u05d9\u05da",
+    fieldTime: "\u05e9\u05e2\u05d5\u05ea",
+    fieldPlace: "\u05de\u05d9\u05e7\u05d5\u05dd",
+    fieldNotes: "\u05d4\u05e2\u05e8\u05d5\u05ea",
+    btnConfirm: "\u05de\u05d0\u05e9\u05e8/\u05ea \u05d4\u05d2\u05e2\u05d4",
+    btnCancel: "\u05de\u05d1\u05e7\u05e9/\u05ea \u05dc\u05d1\u05d8\u05dc",
+    btnCalendar: "\u05d4\u05d5\u05e1\u05e3 \u05dc\u05d9\u05d5\u05de\u05df",
+    fineprint: "\u05d1\u05d9\u05d8\u05d5\u05dc \u05d0\u05d5 \u05e9\u05d9\u05e0\u05d5\u05d9: \u05d1\u05d1\u05e7\u05e9\u05d4 \u05dc\u05e2\u05d3\u05db\u05df \u05dc\u05e4\u05d7\u05d5\u05ea 24 \u05e9\u05e2\u05d5\u05ea \u05de\u05e8\u05d0\u05e9.",
+    travelTitle: "\u05d4\u05d2\u05e2\u05d4 \u05d5\u05e0\u05d9\u05d5\u05d5\u05d8",
+    mapGoogle: "\u05e4\u05ea\u05d7 \u05d1-Google Maps",
+    mapWaze: "\u05e4\u05ea\u05d7 \u05d1-Waze",
+    clinicAlt: "\u05db\u05e0\u05d9\u05e1\u05d4 \u05dc\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4",
+    clinicCaption: "\u05db\u05e0\u05d9\u05e1\u05d4 \u05dc\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05d1\u05e8\u05d7\u05d5\u05d1 \u05d4\u05d6\u05d5\u05d4\u05e8 32, \u05ea\u05dc \u05d0\u05d1\u05d9\u05d1",
+    homeCaptionNew: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea \u2013 \u05de\u05d8\u05e4\u05dc \u05e0\u05d5\u05e9\u05d0 \u05de\u05d9\u05d8\u05ea \u05e2\u05d9\u05e1\u05d5\u05d9 \u05d1\u05de\u05d3\u05e8\u05d2\u05d5\u05ea",
+    homeAriaNew: "\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d8\u05e4\u05dc \u05de\u05d8\u05e4\u05e1 \u05e2\u05dd \u05de\u05d9\u05d8\u05ea \u05e2\u05d9\u05e1\u05d5\u05d9 \u05de\u05ea\u05e7\u05e4\u05dc\u05ea",
+    homeCaptionOld: "\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea \u2013 \u05d4\u05de\u05d8\u05e4\u05dc \u05de\u05d2\u05d9\u05e2 \u05e2\u05dd \u05de\u05d9\u05d8\u05ea \u05d8\u05d9\u05e4\u05d5\u05dc \u05e0\u05d9\u05d9\u05d3\u05ea",
+    homeAriaOld: "\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d8\u05e4\u05dc \u05e2\u05dd \u05de\u05d9\u05d8\u05ea \u05e2\u05d9\u05e1\u05d5\u05d9 \u05e0\u05d9\u05d9\u05d3\u05ea",
+    aboutTitle: "\u05e7\u05e6\u05ea \u05e2\u05dc\u05d9",
+    aboutP1: "\u05d0\u05e0\u05d9 \u05d9\u05d5\u05e0\u05ea\u05df \u05d3\u05d5\u05e8\u05d9, \u05de\u05d8\u05e4\u05dc \u05d1\u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9/\u05e1\u05e4\u05d5\u05e8\u05d8\u05d9\u05d1\u05d9 \u05e2\u05dd \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d1\u05e9\u05d9\u05e7\u05d5\u05dd \u05ea\u05e0\u05d5\u05e2\u05d4 \u05d5\u05d4\u05e7\u05dc\u05d4 \u05d1\u05db\u05d0\u05d1. \u05d4\u05d8\u05d9\u05e4\u05d5\u05dc \u05de\u05d5\u05ea\u05d0\u05dd \u05d0\u05d9\u05e9\u05d9\u05ea \u05dc\u05de\u05e6\u05d1\u05da \u05d5\u05dc\u05de\u05d8\u05e8\u05d5\u05ea\u05d9\u05da, \u05d1\u05e7\u05dc\u05d9\u05e0\u05d9\u05e7\u05d4 \u05e0\u05e2\u05d9\u05de\u05d4 \u05d0\u05d5 \u05d1\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea \u05e2\u05dd \u05db\u05dc \u05d4\u05e6\u05d9\u05d5\u05d3 \u05d4\u05e0\u05d3\u05e8\u05e9.",
+    aboutB1: "\u05d8\u05db\u05e0\u05d9\u05e7\u05d5\u05ea \u05de\u05e9\u05d5\u05dc\u05d1\u05d5\u05ea \u05dc\u05e9\u05d7\u05e8\u05d5\u05e8 \u05e9\u05e8\u05d9\u05e8\u05d9\u05dd, \u05e9\u05d9\u05e4\u05d5\u05e8 \u05d8\u05d5\u05d5\u05d7 \u05ea\u05e0\u05d5\u05e2\u05d4 \u05d5\u05d4\u05e4\u05d7\u05ea\u05ea \u05db\u05d0\u05d1",
+    aboutB2: "\u05e2\u05d1\u05d5\u05d3\u05d4 \u05de\u05de\u05d5\u05e7\u05d3\u05ea \u05d0\u05d7\u05e8\u05d9 \u05de\u05d0\u05de\u05e5, \u05e4\u05e6\u05d9\u05e2\u05d5\u05ea, \u05d0\u05d5 \u05db\u05d0\u05d1\u05d9 \u05d2\u05d1/\u05e6\u05d5\u05d5\u05d0\u05e8 \u05db\u05e8\u05d5\u05e0\u05d9\u05d9\u05dd",
+    aboutB3: "\u05dc\u05d9\u05d5\u05d5\u05d9 \u05d1\u05ea\u05e8\u05d2\u05d9\u05dc\u05d9\u05dd \u05e7\u05e6\u05e8\u05d9\u05dd \u05d5\u05de\u05e2\u05e9\u05d9\u05d9\u05dd \u05e9\u05ea\u05d5\u05db\u05dc\u05d5 \u05dc\u05d4\u05de\u05e9\u05d9\u05da \u05d1\u05d1\u05d9\u05ea",
+    priceTitle: "\u05de\u05d7\u05d9\u05e8\u05d5\u05df",
+    price1: "\u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9 60 \u05d3\u05e7'",
+    price2: "\u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9 75 \u05d3\u05e7'",
+    price3: "\u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9 90 \u05d3\u05e7'",
+    price4: "\u05db\u05e8\u05d8\u05d9\u05e1\u05d9\u05d9\u05d4 (5\u00d760 \u05d3\u05e7')",
+    priceVal1: "\u20aa 320",
+    priceVal2: "\u20aa 380",
+    priceVal3: "\u20aa 430",
+    priceVal4: "\u20aa 1450",
+    payTitle: "\u05d0\u05de\u05e6\u05e2\u05d9 \u05ea\u05e9\u05dc\u05d5\u05dd",
+    pay1: "\u05de\u05d6\u05d5\u05de\u05df / \u05d4\u05e2\u05d1\u05e8\u05d4 / Bit / PayBox",
+    pay2: "\u05e7\u05d1\u05dc\u05d4 \u05de\u05e1\u05d5\u05d3\u05e8\u05ea \u05e0\u05e9\u05dc\u05d7\u05ea \u05d1\u05e1\u05d9\u05d5\u05dd \u05db\u05dc \u05d8\u05d9\u05e4\u05d5\u05dc",
+    pay3: "\u05ea\u05d5\u05e1\u05e4\u05ea \u05e0\u05e1\u05d9\u05e2\u05d4 \u05dc\u05d1\u05d9\u05e7\u05d5\u05e8\u05d9 \u05d1\u05d9\u05ea \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7",
+    cancelTitle: "\u05de\u05d3\u05d9\u05e0\u05d9\u05d5\u05ea \u05d1\u05d9\u05d8\u05d5\u05dc\u05d9\u05dd",
+    cancelText: "\u05d1\u05d9\u05d8\u05d5\u05dc \u05e2\u05d3 24 \u05e9\u05e2\u05d5\u05ea \u05dc\u05e4\u05e0\u05d9 \u05d4\u05ea\u05d5\u05e8 \u2013 \u05dc\u05dc\u05d0 \u05d7\u05d9\u05d5\u05d1. \u05d1\u05d9\u05d8\u05d5\u05dc \u05de\u05d0\u05d5\u05d7\u05e8 \u05d9\u05d5\u05ea\u05e8 \u05e2\u05dc\u05d5\u05dc \u05dc\u05d4\u05d9\u05d5\u05ea \u05de\u05d7\u05d5\u05d9\u05d1 100%.",
+    tipsTitle1: "\u05d4\u05d9\u05e2\u05e8\u05db\u05d5\u05ea",
+    tipsText1: "\u05d4\u05d2\u05d9\u05e2\u05d5 \u05db\u05de\u05d4 \u05d3\u05e7\u05d5\u05ea \u05dc\u05e4\u05e0\u05d9, \u05e9\u05ea\u05d5 \u05de\u05d9\u05dd \u05d5\u05e7\u05d7\u05d5 \u05e8\u05d2\u05e2 \u05dc\u05d4\u05d9\u05e8\u05d2\u05e2.",
+    tipsTitle2: "\u05dc\u05e4\u05e0\u05d9 \u05d8\u05d9\u05e4\u05d5\u05dc",
+    tipsText2: "\u05de\u05d5\u05de\u05dc\u05e5 \u05dc\u05d4\u05d9\u05de\u05e0\u05e2 \u05de\u05d0\u05e8\u05d5\u05d7\u05d4 \u05db\u05d1\u05d3\u05d4 \u05e1\u05de\u05d5\u05da \u05dc\u05d8\u05d9\u05e4\u05d5\u05dc \u05d5\u05dc\u05d4\u05d2\u05d9\u05e2 \u05d1\u05d1\u05d9\u05d2\u05d5\u05d3 \u05e0\u05d5\u05d7.",
+    tipsTitle3: "\u05d0\u05d7\u05e8\u05d9 \u05d8\u05d9\u05e4\u05d5\u05dc",
+    tipsText3: "\u05e9\u05ea\u05d5 \u05de\u05d9\u05dd, \u05ea\u05e0\u05d5 \u05dc\u05d2\u05d5\u05e3 \u05dc\u05e0\u05d5\u05d7 \u05d5\u05d4\u05d9\u05de\u05e0\u05e2\u05d5 \u05de\u05de\u05d0\u05de\u05e5 \u05d7\u05e8\u05d9\u05d2 \u05d1\u05d0\u05d5\u05ea\u05d5 \u05d4\u05d9\u05d5\u05dd.",
+    footer: "\u00a9 {year} \u05d9\u05d5\u05e0\u05ea\u05df \u05d3\u05d5\u05e8\u05d9 \u2013 \u05e2\u05d9\u05e1\u05d5\u05d9 \u05e8\u05e4\u05d5\u05d0\u05d9"
+  };
+
+  function applyHebrewUi() {
+    const setText = (selector, value) => {
+      const el = document.querySelector(selector);
+      if (el && value) el.textContent = value;
+    };
+
+    document.title = uiText.title;
+    setText(".brand h1", uiText.header);
+    setText(".brand .subtitle", uiText.subtitle);
+    setText(".appt-card h2", uiText.apptTitle);
+    const kvLabels = [uiText.fieldClient, uiText.fieldDate, uiText.fieldTime, uiText.fieldPlace, uiText.fieldNotes];
+    document.querySelectorAll(".kv dt").forEach((el, idx) => { if (kvLabels[idx]) el.textContent = kvLabels[idx]; });
+    setText("#btnConfirm", uiText.btnConfirm);
+    setText("#btnCancel", uiText.btnCancel);
+    setText("#btnAddToCal", uiText.btnCalendar);
+    setText(".fineprint", uiText.fineprint);
+    setText(".travel-card h2", uiText.travelTitle);
+    setText("#linkGmaps", uiText.mapGoogle);
+    setText("#linkWaze", uiText.mapWaze);
+
+    const clinicImg = document.querySelector(".clinic-photo img");
+    if (clinicImg) clinicImg.alt = uiText.clinicAlt;
+    const clinicCap = document.querySelector(".clinic-photo figcaption");
+    if (clinicCap) clinicCap.textContent = uiText.clinicCaption;
+
+    const figNew = document.getElementById("homeIllustration2");
+    if (figNew) {
+      const svg = figNew.querySelector("svg"); if (svg) svg.setAttribute("aria-label", uiText.homeAriaNew);
+      const cap = figNew.querySelector("figcaption"); if (cap) cap.textContent = uiText.homeCaptionNew;
+    }
+    const figOld = document.getElementById("homeIllustration");
+    if (figOld) {
+      const svg = figOld.querySelector("svg"); if (svg) svg.setAttribute("aria-label", uiText.homeAriaOld);
+      const cap = figOld.querySelector("figcaption"); if (cap) cap.textContent = uiText.homeCaptionOld;
+    }
+
+    setText(".about-card h2", uiText.aboutTitle);
+    const aboutP = document.querySelector(".about-text p"); if (aboutP) aboutP.textContent = uiText.aboutP1;
+    const aboutLis = document.querySelectorAll(".about-text ul li");
+    [uiText.aboutB1, uiText.aboutB2, uiText.aboutB3].forEach((txt, idx) => {
+      if (aboutLis[idx]) aboutLis[idx].textContent = txt;
+    });
+
+    setText(".stacked-cards .card:nth-child(1) h3", uiText.priceTitle);
+    const priceLabels = [uiText.price1, uiText.price2, uiText.price3, uiText.price4];
+    const priceValues = [uiText.priceVal1, uiText.priceVal2, uiText.priceVal3, uiText.priceVal4];
+    document.querySelectorAll(".price-list li").forEach((li, idx) => {
+      const spans = li.querySelectorAll("span");
+      if (spans[0] && priceLabels[idx]) spans[0].textContent = priceLabels[idx];
+      if (spans[1] && priceValues[idx]) spans[1].textContent = priceValues[idx];
+    });
+
+    setText(".stacked-cards .card:nth-child(2) h3", uiText.payTitle);
+    const payLis = document.querySelectorAll(".stacked-cards .card:nth-child(2) .bullets li");
+    [uiText.pay1, uiText.pay2, uiText.pay3].forEach((txt, idx) => {
+      if (payLis[idx]) payLis[idx].textContent = txt;
+    });
+
+    setText(".stacked-cards .card:nth-child(3) h3", uiText.cancelTitle);
+    const cancelP = document.querySelector(".stacked-cards .card:nth-child(3) p");
+    if (cancelP) cancelP.textContent = uiText.cancelText;
+
+    const tipsTitles = [uiText.tipsTitle1, uiText.tipsTitle2, uiText.tipsTitle3];
+    const tipsTexts = [uiText.tipsText1, uiText.tipsText2, uiText.tipsText3];
+    document.querySelectorAll(".tips-grid .card").forEach((card, idx) => {
+      const h3 = card.querySelector("h3"); const p = card.querySelector("p");
+      if (h3 && tipsTitles[idx]) h3.textContent = tipsTitles[idx];
+      if (p && tipsTexts[idx]) p.textContent = tipsTexts[idx];
+    });
+
+    const footerP = document.querySelector(".site-footer .footer-text");
+    if (footerP) footerP.innerHTML = uiText.footer.replace("{year}", "<span id=\"year\"></span>");
+  }
+
+  applyHebrewUi();
+
   const hash = window.location.hash || "";
   if (hash && hash.length > 1) {
     // Try ultra-short packed format first: #!<b64url>

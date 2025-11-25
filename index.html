@@ -4,75 +4,66 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <title>אישור תור – יונתן דורי</title>
+  <title>Appointment Confirmation | Yonatan Dori Massage</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Header: לוגו מעל הכותרת, ממורכז -->
   <header class="site-header container">
     <div class="brand">
-      <!-- עדכן לנתיב הלוגו שלך -->
-      <img src="logo-yonatan.png" alt="לוגו הקליניקה" class="logo" />
-      <h1>יונתן דורי – עיסוי רפואי</h1>
-      <p class="subtitle">אישור/עדכון תור והנחיות הגעה</p>
+      <img src="logo-yonatan.png" alt="Yonatan Dori Massage" class="logo" />
+      <h1>Appointment Confirmation</h1>
+      <p class="subtitle">Medical/sports massage in clinic (Tel Aviv/Pardesia) or home visit</p>
     </div>
   </header>
 
   <main class="container layout">
-    <!-- ימין: פרטי תור + כפתורים -->
     <section class="card appt-card">
-      <h2>פרטי התור</h2>
+      <h2>Appointment Details</h2>
 
-      <!-- עדכן את פרטי התור ב-data-* -->
       <div id="appt"
-           data-title="עיסוי רפואי – טיפול מלא"
-           data-start-local="2025-10-22T09:00:00"
-           data-end-local="2025-10-22T10:15:00"
-           data-location="קליניקה: רח׳ הדוגמה 12, תל אביב"
-           data-notes="נשמח לראותך! אם יש כאב ספציפי—ציין בהודעה."
-           data-client-name="דניאל כהן">
+           data-title="Massage appointment"
+           data-start-local=""
+           data-end-local=""
+           data-location=""
+           data-notes=""
+           data-client-name="">
         <dl class="kv">
-          <div><dt>לקוח/ה</dt><dd id="clientName">—</dd></div>
-          <div><dt>תאריך</dt><dd id="dateText">—</dd></div>
-          <div><dt>שעה</dt><dd id="timeText">—</dd></div>
-          <div><dt>מקום</dt><dd id="placeText">—</dd></div>
-          <div><dt>הערות</dt><dd id="notesText">—</dd></div>
+          <div><dt>Client name</dt><dd id="clientName">-</dd></div>
+          <div><dt>Date</dt><dd id="dateText">-</dd></div>
+          <div><dt>Time</dt><dd id="timeText">-</dd></div>
+          <div><dt>Location</dt><dd id="placeText">-</dd></div>
+          <div><dt>Notes</dt><dd id="notesText">-</dd></div>
         </dl>
       </div>
 
       <div class="btn-row">
-        <a id="btnConfirm" class="btn primary" href="#" target="_blank" rel="noopener">אישור הגעה</a>
-        <a id="btnCancel" class="btn ghost" href="#" target="_blank" rel="noopener">ביטול תור</a>
+        <a id="btnConfirm" class="btn primary" href="#" target="_blank" rel="noopener">Confirm attendance</a>
+        <a id="btnCancel" class="btn ghost" href="#" target="_blank" rel="noopener">Request cancel</a>
       </div>
 
       <div class="btn-row">
-        <!-- כפתור יחיד: פותח Google Calendar וגם מוריד ICS -->
-        <a id="btnAddToCal" class="btn" href="#" target="_blank" rel="noopener">הוסף ליומן</a>
+        <a id="btnAddToCal" class="btn" href="#" target="_blank" rel="noopener">Add to calendar</a>
       </div>
 
-      <p class="fineprint">אנא אשר/בטל עד 24 שעות לפני מועד התור.</p>
+      <p class="fineprint">Cancel/change: please update at least 24 hours in advance.</p>
     </section>
 
-    <!-- שמאל: פרטי הגעה + מפות + תמונת כניסה -->
     <section class="card travel-card">
-     
+      <h2>Arrival & Navigation</h2>
 
       <div class="map-links">
-        <a id="linkGmaps" class="btn" target="_blank" rel="noopener">פתח ב-Google Maps</a>
-        <a id="linkWaze" class="btn ghost" target="_blank" rel="noopener">נווט עם Waze</a>
+        <a id="linkGmaps" class="btn" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a id="linkWaze" class="btn ghost" target="_blank" rel="noopener">Open in Waze</a>
       </div>
-<!-- פרטי הגעה -->
-<div id="arrivalInfo" class="info-box"></div>
+      <div id="arrivalInfo" class="info-box" style="display:none"></div>
 
       <figure class="clinic-photo">
-        <!-- עדכן לתמונה שלך -->
-        <img src="assets/entrance.jpg" alt="הכניסה לקליניקה" />
-        <figcaption>הכניסה לקליניקה</figcaption>
+        <img src="assets/entrance.jpg" alt="Clinic entrance" />
+        <figcaption>Clinic entrance, 32 HaZohar St, Tel Aviv</figcaption>
       </figure>
 
-      <!-- New home-visit illustration (therapist carrying massage bed up stairs) -->
       <figure id="homeIllustration2" class="home-illustration" style="display:none" aria-hidden="true">
-        <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="ביקור בית: מטפל סוחב מיטת עיסוי במדרגות ליד בית">
+        <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="Home visit illustration: therapist climbing stairs with a folding massage bed">
           <defs>
             <linearGradient id="roofGrad2" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#0ea5e9"/>
@@ -114,12 +105,11 @@
           <line x1="79" y1="96" x2="70" y2="92" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
           <line x1="106" y1="96" x2="140" y2="88" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
         </svg>
-        <figcaption></figcaption>
+        <figcaption>Home visit - therapist carrying a massage bed upstairs</figcaption>
       </figure>
 
-      <!-- Home-visit illustration (shown only when visiting client's home) -->
       <figure id="homeIllustration" class="home-illustration" style="display:none" aria-hidden="true">
-        <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="ביקור בית – מעסה מגיע עם מיטה">
+        <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="Home visit illustration: therapist with a portable massage bed">
           <defs>
             <linearGradient id="roofGrad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#0ea5e9"/>
@@ -153,87 +143,79 @@
           <!-- Strap/rope to bed -->
           <line x1="128" y1="88" x2="118" y2="89" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3"/>
         </svg>
-        <figcaption>ביקור בית – ללא צורך הגעה לקליניקה</figcaption>
+        <figcaption>Home visit - portable massage bed</figcaption>
       </figure>
     </section>
 
-    <!-- שורה שנייה: ימין = מי אני; שמאל = שלושה ריבועים -->
     <section class="card about-card">
-      <h2>מי אני</h2>
+      <h2>About</h2>
       <div class="about-flex">
         <div class="about-text">
           <p>
-            שמי יונתן דורי, מעסה רפואי המתמחה בשחרור כאב, שיפור טווחי תנועה ותפקוד.
-            הטיפול משלב עבודה מדויקת בשכבות הרקמה, תנועתיות מפרקית והנחיה נשימתית.
+            I'm Yonatan Dori, a medical/sports massage therapist with experience in movement rehab and pain relief.
+            Treatments are tailored to your needs and goals, in a comfortable clinic or at your home with full equipment.
           </p>
           <ul>
-            <li>ניסיון רב-שנים עם ספורטאים ואורח חיים יושבני</li>
-            <li>התאמה אישית לכל מקרה—אין שני טיפולים זהים</li>
-            <li>אפשר לשלב אבנים חמות/כוסות רוח לפי צורך</li>
+            <li>Blended techniques for muscle release, mobility, and pain reduction</li>
+            <li>Focused work post-training, injuries, or chronic back/neck pain</li>
+            <li>Short, practical exercises you can continue at home</li>
           </ul>
         </div>
         <div class="about-photo">
-          <img src="me pic massage.jpg" alt="יונתן דורי" />
+          <img src="me pic massage.jpg" alt="Yonatan Dori" />
         </div>
       </div>
     </section>
 
     <section class="stacked-cards">
       <section class="card">
-        <h3>מחירון</h3>
+        <h3>Pricing</h3>
         <ul class="price-list">
-          <li><span>טיפול 60 ד׳</span><span>₪320</span></li>
-          <li><span>טיפול 75 ד׳</span><span>₪380</span></li>
-          <li><span>טיפול 90 ד׳</span><span>₪430</span></li>
-          <li><span>כרטיסייה (5×60 ד׳)</span><span>₪1450</span></li>
+          <li><span>Medical massage 60 min</span><span>NIS 320</span></li>
+          <li><span>Medical massage 75 min</span><span>NIS 380</span></li>
+          <li><span>Medical massage 90 min</span><span>NIS 430</span></li>
+          <li><span>5-session pack (60 min)</span><span>NIS 1450</span></li>
         </ul>
       </section>
 
       <section class="card">
-        <h3>אפשרויות תשלום</h3>
+        <h3>Payment methods</h3>
         <ul class="bullets">
-          <li>מזומן / העברה בנקאית / Bit / PayBox</li>
-          <li>אשראי דרך קישור מאובטח (בתוספת עמלה)</li>
-          <li>חשבונית מס/קבלה דיגיטלית נשלחת אוטומטית</li>
+          <li>Cash / bank transfer / Bit / PayBox</li>
+          <li>Receipt provided after every treatment</li>
+          <li>Travel surcharge for home visits by distance</li>
         </ul>
       </section>
 
       <section class="card">
-        <h3>מדיניות ביטולים</h3>
+        <h3>Cancellation policy</h3>
         <p>
-          ביטול עד <strong>24 שעות</strong> לפני התור—ללא חיוב.
-          ביטול מאוחר/אי-הגעה עשוי לחויב עד <strong>100%</strong>.
+          Cancel up to 24 hours before the appointment for no charge.
+          Later cancellations may be charged 100%.
         </p>
       </section>
     </section>
 
-    <!-- תחתית: טיפים -->
     <section class="tips-grid">
       <section class="card">
-        <h3>לבוש</h3>
-        <p>מומלץ להגיע בלבוש נוח; ניתן להחליף במקום.</p>
+        <h3>Prep</h3>
+        <p>Arrive a few minutes early, drink water, and take a breath.</p>
       </section>
       <section class="card">
-        <h3>אוכל לפני טיפול</h3>
-        <p>להימנע מארוחה כבדה עד כשעתיים לפני; נשנוש קל עד 30–60 ד׳ לפני זה מעולה.</p>
+        <h3>Before treatment</h3>
+        <p>Avoid a heavy meal right before and wear comfortable clothing.</p>
       </section>
       <section class="card">
-        <h3>בריאות</h3>
-        <p>אם יש כאב/פציעה/מצב רפואי—ספר/י מראש כדי שנתאים את הטיפול.</p>
+        <h3>After treatment</h3>
+        <p>Drink water, rest, and avoid heavy exertion later that day.</p>
       </section>
     </section>
   </main>
 
   <footer class="site-footer container">
-    <p>© <span id="year"></span> יונתן דורי — עיסוי רפואי</p>
+    <p class="footer-text">(c) <span id="year"></span> Yonatan Dori - Medical Massage</p>
   </footer>
 
   <script src="app.js?v=5"></script>
 </body>
 </html>
-
-
-
-
-
-
