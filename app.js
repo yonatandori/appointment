@@ -295,23 +295,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showHomeVisitLayout() {
     try {
-      const mapLinks = document.querySelector(".map-links");
-      if (mapLinks) mapLinks.style.display = "none";
-      const arrivalInfo = document.getElementById("arrivalInfo");
-      if (arrivalInfo) {
-        arrivalInfo.style.display = "";
-        arrivalInfo.innerHTML = `
-          <p><strong>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea:</strong><br>\u05de\u05d7\u05d9\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d4\u05d1\u05d9\u05ea \u05d9\u05e7\u05d1\u05e2 \u05de\u05e8\u05d0\u05e9 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7, \u05d5\u05d2\u05d9\u05e9\u05d4 \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05d8\u05d5\u05e4\u05dc</p>
-        `;
-      }
       const placeEl = document.getElementById("placeText");
       if (placeEl) placeEl.textContent = HOME_LABEL;
-      const clinic = document.querySelector(".clinic-photo");
-      if (clinic) clinic.style.display = "none";
-      const homeFigOld = document.getElementById("homeIllustration");
-      const homeFigNew = document.getElementById("homeIllustration2");
-      if (homeFigOld) homeFigOld.style.display = "none";
-      if (homeFigNew) homeFigNew.style.display = "none";
+
+      // Replace the entire travel card content with the requested text
+      const travelCard = document.querySelector(".travel-card");
+      if (travelCard) {
+        travelCard.innerHTML = `
+          <h2>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea</h2>
+          <p class="info-box" style="display:block">\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d7\u05d9\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d4\u05d1\u05d9\u05ea \u05d9\u05e7\u05d1\u05e2 \u05de\u05e8\u05d0\u05e9 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7, \u05d5\u05d2\u05d9\u05e9\u05d4 \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05d8\u05d5\u05e4\u05dc</p>
+        `;
+      }
     } catch (_) { /* no-op */ }
   }
 
