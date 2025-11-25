@@ -301,13 +301,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (arrivalInfo) {
         arrivalInfo.style.display = "";
         arrivalInfo.innerHTML = `
-          <h3>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea</h3>
-          <p>\u05d9\u05d5\u05e0\u05ea\u05df \u05de\u05d2\u05d9\u05e2/\u05d4 \u05d0\u05dc\u05d9\u05da \u05e2\u05dd \u05de\u05d9\u05d8\u05d4. \u05e0\u05d0 \u05dc\u05d4\u05db\u05d9\u05df \u05de\u05e7\u05d5\u05dd \u05e4\u05e0\u05d5\u05d9, \u05e0\u05e7\u05d5\u05d3\u05ea \u05d7\u05e9\u05de\u05dc \u05d5\u05de\u05d2\u05d1\u05ea/\u05e1\u05d3\u05d9\u05df.</p>
+          <p><strong>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea:</strong><br>\u05de\u05d7\u05d9\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d4\u05d1\u05d9\u05ea \u05d9\u05e7\u05d1\u05e2 \u05de\u05e8\u05d0\u05e9 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7, \u05d5\u05d2\u05d9\u05e9\u05d4 \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05d8\u05d5\u05e4\u05dc</p>
         `;
       }
       const placeEl = document.getElementById("placeText");
       if (placeEl) placeEl.textContent = HOME_LABEL;
-      toggleHomeVisuals(true);
+      const clinic = document.querySelector(".clinic-photo");
+      if (clinic) clinic.style.display = "none";
+      const homeFigOld = document.getElementById("homeIllustration");
+      const homeFigNew = document.getElementById("homeIllustration2");
+      if (homeFigOld) homeFigOld.style.display = "none";
+      if (homeFigNew) homeFigNew.style.display = "none";
     } catch (_) { /* no-op */ }
   }
 
