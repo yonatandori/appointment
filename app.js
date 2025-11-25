@@ -304,8 +304,8 @@ document.addEventListener("DOMContentLoaded", function () {
         travelCard.innerHTML = `
           <h2>\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea</h2>
           <p class="info-box" style="display:block">\u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d7\u05d9\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d4\u05d1\u05d9\u05ea \u05d9\u05e7\u05d1\u05e2 \u05de\u05e8\u05d0\u05e9 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05de\u05e8\u05d7\u05e7, \u05d5\u05d2\u05d9\u05e9\u05d4 \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05d8\u05d5\u05e4\u05dc</p>
-          <figure class="home-illustration">
-            <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d8\u05e4\u05dc \u05de\u05d8\u05e4\u05e1 \u05e2\u05dd \u05de\u05d9\u05d8\u05d4 \u05d1\u05de\u05d3\u05e8\u05d2\u05d5\u05ea">
+          <figure class="home-illustration" style="display:block;margin-top:14px">
+            <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="\u05d0\u05d9\u05d5\u05e8 \u05d1\u05d9\u05e7\u05d5\u05e8 \u05d1\u05d9\u05ea: \u05de\u05d8\u05e4\u05dc \u05de\u05d8\u05e4\u05e1 \u05e2\u05dd \u05de\u05d9\u05d8\u05d4 \u05d1\u05de\u05d3\u05e8\u05d2\u05d5\u05ea" style="display:block;width:100%;height:auto">
               <defs>
                 <linearGradient id="homeRoof" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stop-color="#0ea5e9"/>
