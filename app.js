@@ -130,12 +130,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const figNew = document.getElementById("homeIllustration2");
     if (figNew) {
       const svg = figNew.querySelector("svg"); if (svg) svg.setAttribute("aria-label", uiText.homeAriaNew);
-      const cap = figNew.querySelector("figcaption"); if (cap) cap.textContent = uiText.homeCaptionNew;
+      const cap = figNew.querySelector("figcaption"); if (cap) cap.textContent = "";
     }
     const figOld = document.getElementById("homeIllustration");
     if (figOld) {
       const svg = figOld.querySelector("svg"); if (svg) svg.setAttribute("aria-label", uiText.homeAriaOld);
-      const cap = figOld.querySelector("figcaption"); if (cap) cap.textContent = uiText.homeCaptionOld;
+      const cap = figOld.querySelector("figcaption"); if (cap) cap.textContent = "";
     }
 
     setText(".about-card h2", uiText.aboutTitle);
